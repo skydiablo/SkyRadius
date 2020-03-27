@@ -49,7 +49,7 @@ class SkyRadius extends EventEmitter
     /**
      * @var AttributeManager
      */
-    protected $attributeHandler;
+    protected $attributeManager;
 
     /**
      * @var RawAttributeHandler
@@ -61,13 +61,13 @@ class SkyRadius extends EventEmitter
      * @param LoopInterface $loop
      * @param string $uri udp://0.0.0.0:3400 listen on all interfaces at port 3400
      * @param string $psk
-     * @param AttributeManager|null $attributeHandler
+     * @param AttributeManager|null $attributeManager
      */
-    public function __construct(LoopInterface $loop, string $uri, string $psk, AttributeManager $attributeHandler = null)
+    public function __construct(LoopInterface $loop, string $uri, string $psk, AttributeManager $attributeManager = null)
     {
         $this->loop = $loop;
         $this->psk = $psk;
-        $this->attributeHandler = $attributeHandler ?: new AttributeManager();
+        $this->attributeManager = $attributeManager ?: new AttributeManager();
         $this->rawAttributeHandler = new RawAttributeHandler();
         $this->initRFC2865AttributeHandler();
 
@@ -91,7 +91,7 @@ class SkyRadius extends EventEmitter
 
     protected function initRFC2865AttributeHandler()
     {
-        $this->attributeHandler
+        $this->attributeManager
             ->setHandler(new VendorSpecificAttributeHandler(), AttributeInterface::ATTR_VENDOR_SPECIFIC)
             ->setHandler(
                 new UserPasswordAttributeHandler(),
@@ -147,7 +147,7 @@ class SkyRadius extends EventEmitter
      */
     public function setHandler(AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = [])
     {
-        $this->attributeHandler->setHandler($handler, $type, $alias, $values);
+        $this->attributeManager->setHandler($handler, $type, $alias, $values);
         return $this;
     }
 
@@ -162,7 +162,7 @@ class SkyRadius extends EventEmitter
     public function setVsaHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = [])
     {
         /** @var VendorSpecificAttributeHandler $vsaHandler */
-        $vsaHandler = $this->attributeHandler->getHandler(AttributeInterface::ATTR_VENDOR_SPECIFIC);
+        $vsaHandler = $this->attributeManager->getHandler(AttributeInterface::ATTR_VENDOR_SPECIFIC);
         if ($vsaHandler) {
             $vsaHandler->setHandler($vendorId, $handler, $type, $alias, $values);
         } else {
@@ -208,7 +208,7 @@ class SkyRadius extends EventEmitter
         while (($pos < $len) && ($pos < $realDataLen)) {
             $rawAttr = $this->rawAttributeHandler->parseRawAttribute($data, $pos);
             $pos += $rawAttr->getAttributeLength();
-            if ($attribute = $this->attributeHandler->deserializeRawAttribute($rawAttr, $requestPacket)) {
+            if ($attribute = $this->attributeManager->deserializeRawAttribute($rawAttr, $requestPacket)) {
                 $requestPacket->addAttribute($attribute);
             }
         }
@@ -226,7 +226,7 @@ class SkyRadius extends EventEmitter
     {
         $attributesData = '';
         foreach ($responsePacket->getAttributes() as $attribute) {
-            $attributesData .= $this->attributeHandler->serializeAttribute($attribute);
+            $attributesData .= $this->attributeManager->serializeAttribute($attribute);
         }
         $haystack = $responsePacket->getType() .
             $requestPacket->getIdentifier() .

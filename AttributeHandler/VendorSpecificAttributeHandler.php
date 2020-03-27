@@ -22,7 +22,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
     /**
      * @var AttributeManager[]
      */
-    private $attributeHandlerList = [];
+    private $attributeManagerList = [];
 
     /**
      * VendorSpecificAttributeHandler constructor.
@@ -42,7 +42,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      */
     public function setHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $valueAlias = [])
     {
-        $ah = $this->attributeHandlerList[$vendorId] ?? $this->attributeHandlerList[$vendorId] = new AttributeManager();
+        $ah = $this->attributeManagerList[$vendorId] ?? $this->attributeManagerList[$vendorId] = new AttributeManager();
         $ah->setHandler($handler, $type, $alias, $valueAlias);
         return $this;
     }
@@ -56,7 +56,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
     {
         $vendorId = $this->unpackInt32($rawAttribute->getValue()); //first 4 bytes are represent the vendor-id
         $vsaRawAttribute = $this->rawAttributeHandler->parseRawAttribute($rawAttribute->getValue(), 4); //skip first 4 bytes
-        $ah = $this->attributeHandlerList[$vendorId] ?? null;
+        $ah = $this->attributeManagerList[$vendorId] ?? null;
         if ($ah) {
             $attr = $ah->deserializeRawAttribute($vsaRawAttribute, $requestPacket);
             return new VendorSpecificAttribute($vendorId, $attr);
@@ -69,7 +69,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      */
     public function serializeValue(AttributeInterface $attribute)
     {
-        $ah = $this->attributeHandlerList[$attribute->getVendorId()] ?? null;
+        $ah = $this->attributeManagerList[$attribute->getVendorId()] ?? null;
         if ($ah) {
             /** @var VendorSpecificAttribute $attribute */
             $out = $this->packInt32($attribute->getVendorId());

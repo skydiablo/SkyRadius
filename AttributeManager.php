@@ -2,31 +2,23 @@
 
 declare(strict_types=1);
 
-
 namespace SkyDiablo\SkyRadius;
 
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\VendorSpecificAttribute;
-use SkyDiablo\SkyRadius\AttributeHandler\RawAttributeHandler;
-use SkyDiablo\SkyRadius\AttributeHandler\VendorSpecificAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\AttributeHandlerInterface;
 use SkyDiablo\SkyRadius\Helper\UnPackInteger;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
-class AttributeHandler
+class AttributeManager
 {
 
     use UnPackInteger;
 
     const HANDLER = 0;
-    const TYPE = 1;
-    const TYPE_ALIAS = 2;
-    const VALUE_ALIAS = 3;
-    const HANDLER_TYPE = 4;
-    const RFC2865_HANDLER = 5;
-    const VSA_HANDLER = 6;
-    const VSA_VENDOR_ID = 7;
+    const TYPE_ALIAS = 1;
+    const VALUE_ALIAS = 2;
 
     /**
      * @var AttributeHandlerInterface[]
@@ -35,17 +27,12 @@ class AttributeHandler
 
     private $typeAliasMap = [];
 
-    public function registerVendorSpecificAttribute($vendorId, int $type, string $alias, array $values = [])
-    {
-
-    }
-
     /**
      * @param AttributeHandlerInterface $handler
      * @param int $type
      * @param string|null $alias
      * @param array $values
-     * @return AttributeHandler
+     * @return AttributeManager
      */
     public function setHandler(AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = [])
     {

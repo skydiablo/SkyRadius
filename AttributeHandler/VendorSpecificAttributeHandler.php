@@ -7,7 +7,7 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\VendorSpecificAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
-use SkyDiablo\SkyRadius\AttributeHandler;
+use SkyDiablo\SkyRadius\AttributeManager;
 use SkyDiablo\SkyRadius\AttributeHandler\AttributeHandlerInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
@@ -20,7 +20,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
     private $rawAttributeHandler;
 
     /**
-     * @var AttributeHandler[]
+     * @var AttributeManager[]
      */
     private $attributeHandlerList = [];
 
@@ -42,7 +42,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      */
     public function setHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $valueAlias = [])
     {
-        $ah = $this->attributeHandlerList[$vendorId] ?? $this->attributeHandlerList[$vendorId] = new AttributeHandler();
+        $ah = $this->attributeHandlerList[$vendorId] ?? $this->attributeHandlerList[$vendorId] = new AttributeManager();
         $ah->setHandler($handler, $type, $alias, $valueAlias);
         return $this;
     }

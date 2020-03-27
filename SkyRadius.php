@@ -47,7 +47,7 @@ class SkyRadius extends EventEmitter
     private $psk;
 
     /**
-     * @var AttributeHandler
+     * @var AttributeManager
      */
     protected $attributeHandler;
 
@@ -61,13 +61,13 @@ class SkyRadius extends EventEmitter
      * @param LoopInterface $loop
      * @param string $uri udp://0.0.0.0:3400 listen on all interfaces at port 3400
      * @param string $psk
-     * @param AttributeHandler|null $attributeHandler
+     * @param AttributeManager|null $attributeHandler
      */
-    public function __construct(LoopInterface $loop, string $uri, string $psk, AttributeHandler $attributeHandler = null)
+    public function __construct(LoopInterface $loop, string $uri, string $psk, AttributeManager $attributeHandler = null)
     {
         $this->loop = $loop;
         $this->psk = $psk;
-        $this->attributeHandler = $attributeHandler ?: new AttributeHandler();
+        $this->attributeHandler = $attributeHandler ?: new AttributeManager();
         $this->rawAttributeHandler = new RawAttributeHandler();
         $this->initRFC2865AttributeHandler();
 

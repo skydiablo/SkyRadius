@@ -1,0 +1,23 @@
+{
+  "name": "skydiablo/skyradius",
+  "type": "library",
+  "description": "The first (known to me) RADIUS server which was implemented natively in PHP!",
+  "keywords": [
+    "RADIUS"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Volker von Hoeßlin",
+      "email": "skydiablo@gmx.net"
+    }
+  ],
+  "require": {
+    "react/datagram": "^1.5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SkyDiablo\\SkyRadius\\": ""
+    }
+  }
+}

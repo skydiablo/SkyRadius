@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\lib\SkyDiablo\SkyRadius\src\Dictionary\FreeRadiusDictionaryLoader;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
@@ -25,6 +26,10 @@ require __DIR__ . '/vendor/autoload.php';
 
 $loop = \React\EventLoop\Factory::create();
 $radius = new SkyRadius($loop, '0.0.0.0:3500', 'test');
+
+// load freeRADIUS dictionary files
+$loader = new FreeRadiusDictionaryLoader($radius);
+$loader->load('./dictionary/');
 
 // add VendorSpecificAttribute
 $radius->setVsaHandler(529, new IPv4AttributeHandler(), 139, 'Ascend-VSA-User-Acct-Host');

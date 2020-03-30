@@ -77,5 +77,4 @@ would be pleased about experience values of users.
 - Attribute Dictionary Loader
   - YAML
   - JSON
-  - freeRADIUS Dictionary
 - UnitTest

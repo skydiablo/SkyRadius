@@ -11,9 +11,5 @@ namespace SkyDiablo\SkyRadius\Attribute;
  */
 class IPv4Attribute extends StringAttribute
 {
-    public function __construct(int $type, string $ip)
-    {
-        parent::__construct($type, $ip);
-    }
 
 }

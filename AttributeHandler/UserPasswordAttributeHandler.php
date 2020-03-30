@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace SkyDiablo\SkyRadius\AttributeHandler;
-
 
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;

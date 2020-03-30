@@ -1,6 +1,5 @@
 <?php
 
-
 namespace SkyDiablo\SkyRadius\AttributeHandler;
 
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;

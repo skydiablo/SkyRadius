@@ -11,6 +11,10 @@ use SkyDiablo\SkyRadius\AttributeManager;
 use SkyDiablo\SkyRadius\AttributeHandler\AttributeHandlerInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
+/**
+ * Class VendorSpecificAttributeHandler
+ * @package SkyDiablo\SkyRadius\AttributeHandler
+ */
 class VendorSpecificAttributeHandler extends AbstractAttributeHandler
 {
 
@@ -56,9 +60,9 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
     {
         $vendorId = $this->unpackInt32($rawAttribute->getValue()); //first 4 bytes are represent the vendor-id
         $vsaRawAttribute = $this->rawAttributeHandler->parseRawAttribute($rawAttribute->getValue(), 4); //skip first 4 bytes
-        $ah = $this->attributeManagerList[$vendorId] ?? null;
-        if ($ah) {
-            $attr = $ah->deserializeRawAttribute($vsaRawAttribute, $requestPacket);
+        $attributeHandler = $this->attributeManagerList[$vendorId] ?? null;
+        if ($attributeHandler) {
+            $attr = $attributeHandler->deserializeRawAttribute($vsaRawAttribute, $requestPacket);
             return new VendorSpecificAttribute($vendorId, $attr);
         }
     }
@@ -69,11 +73,11 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      */
     public function serializeValue(AttributeInterface $attribute)
     {
-        $ah = $this->attributeManagerList[$attribute->getVendorId()] ?? null;
-        if ($ah) {
+        $attributeHandler = $this->attributeManagerList[$attribute->getVendorId()] ?? null;
+        if ($attributeHandler) {
             /** @var VendorSpecificAttribute $attribute */
             $out = $this->packInt32($attribute->getVendorId());
-            $out .= $ah->serializeAttribute($attribute->getInnerVSA());
+            $out .= $attributeHandler->serializeAttribute($attribute->getInnerVSA());
             return $out;
         }
     }

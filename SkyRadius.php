@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
 
+use App\lib\SkyDiablo\SkyRadius\Exception\SilentDiscardException;
 use SkyDiablo\SkyRadius\AttributeHandler\RawAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\VendorSpecificAttributeHandler;
 use SkyDiablo\SkyRadius\Connection\Context;
@@ -76,9 +77,15 @@ class SkyRadius extends EventEmitter
         $this->socket
             ->then(function (Socket $socket) {
                 $socket->on('message', function (string $raw, string $peer, Socket $server) {
-                    $context = new Context($this->handleRawInput($raw));
-                    $this->emit(self::EVENT_PACKET, [$context]);
-                    $this->sendResponse($context, $peer, $server);
+                    try {
+
+                        $context = new Context($this->handleRawInput($raw));
+                        $this->emit(self::EVENT_PACKET, [$context]);
+                        $this->sendResponse($context, $peer, $server);
+                    } catch (SilentDiscardException $e) {
+                        // silently ignored...
+                        // @todo: logging?!
+                    }
                 });
             })
             ->then(function (Socket $socket) {
@@ -190,29 +197,39 @@ class SkyRadius extends EventEmitter
     /**
      * @param string $data
      * @return RequestPacket
-     * @todo: the input buffer is set to 65536 bytes (64MB) by default, this should be enough for now.
+     * @throws SilentDiscardException
      * @todo: you can change this value by "$this->socket->bufferSize". if this value is to small, this function have to
      * @todo: handle multiple input raw-input-data for the same request!
+     * @todo: the input buffer is set to 65536 bytes (64MB) by default, this should be enough for now.
      */
     protected function handleRawInput(string $data): RequestPacket
     {
-        $type = ord($data{0});
-        $id = ord($data{1});
-        $len = unpack('n', substr($data, 2, 2))[1];
+        $type = $this->unpackInt8($data, 0);
+        $id = $this->unpackInt8($data, 1);
+        $len = $this->unpackInt16($data, 2);
         $authenticator = substr($data, 4, 16);
         $realDataLen = strlen($data);
         $pos = 20; // $type = 1byte + $id = 1byte + $len = 2byte + $authenticator = 16byte
 
-        $requestPacket = new RequestPacket($type, $id, $authenticator, $this->psk);
+        /*
+         * Octets outside the range of the Length field
+         * MUST be treated as padding and ignored on reception.  If the
+         * packet is shorter than the Length field indicates, it MUST be
+         * silently discarded.  The minimum length is 20 and maximum length
+         * is 4096.
+         */
+        if ($len > $realDataLen) { // package is to short
+            throw SilentDiscardException::create();
+        }
 
-        while (($pos < $len) && ($pos < $realDataLen)) {
+        $requestPacket = new RequestPacket($type, $id, $authenticator, $this->psk);
+        while ($pos < $len) {
             $rawAttr = $this->rawAttributeHandler->parseRawAttribute($data, $pos);
             $pos += $rawAttr->getAttributeLength();
             if ($attribute = $this->attributeManager->deserializeRawAttribute($rawAttr, $requestPacket)) {
                 $requestPacket->addAttribute($attribute);
             }
         }
-
         return $requestPacket;
     }
 

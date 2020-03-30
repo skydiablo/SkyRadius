@@ -32,6 +32,7 @@ class RawAttribute extends AbstractAttribute
     }
 
     /**
+     * payload byte-count
      * @return int
      */
     public function getValueLength(): int
@@ -40,6 +41,7 @@ class RawAttribute extends AbstractAttribute
     }
 
     /**
+     * complete attribute byte-count
      * @return int
      */
     public function getAttributeLength(): int

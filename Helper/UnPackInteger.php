@@ -61,54 +61,49 @@ trait UnPackInteger
 
     /**
      * @param int $bit
-     * @param string $data
-     * @param int $startPos
+     * @param int $integer
      * @return string
      */
-    private function packInt(int $bit, string $data, $startPos = 0)
+    private function packInt(int $bit, int $integer)
     {
         $format = IntegerAttribute::FORMATTER[$bit];
-        return pack($format, substr($data, $startPos));
+        return pack($format, $integer);
     }
 
     /**
-     * @param $data
-     * @param int $startPos
+     * @param $integer
      * @return string
      */
-    protected function packInt8($data, $startPos = 0)
+    protected function packInt8(int $integer)
     {
-        return $this->packInt(IntegerAttribute::BIT_8, $data, $startPos);
+        return $this->packInt(IntegerAttribute::BIT_8, $integer);
     }
 
     /**
-     * @param $data
-     * @param int $startPos
+     * @param int $integer
      * @return string
      */
-    protected function packInt16($data, $startPos = 0)
+    protected function packInt16(int $integer)
     {
-        return $this->packInt(IntegerAttribute::BIT_16, $data, $startPos);
+        return $this->packInt(IntegerAttribute::BIT_16, $integer);
     }
 
     /**
-     * @param $data
-     * @param int $startPos
+     * @param $integer
      * @return string
      */
-    protected function packInt32($data, $startPos = 0)
+    protected function packInt32(int $integer)
     {
-        return $this->packInt(IntegerAttribute::BIT_32, $data, $startPos);
+        return $this->packInt(IntegerAttribute::BIT_32, $integer);
     }
 
     /**
-     * @param $data
-     * @param int $startPos
+     * @param $integer
      * @return string
      */
-    protected function packInt64($data, $startPos = 0)
+    protected function packInt64(int $integer)
     {
-        return $this->packInt(IntegerAttribute::BIT_64, $data, $startPos);
+        return $this->packInt(IntegerAttribute::BIT_64, $integer, $startPos);
     }
 
 }

@@ -19,6 +19,8 @@ class StringAttribute extends AbstractAttribute
      */
     public function __construct(int $type, string $value)
     {
+        // by RADIUS protocol design, the length is limited to 253 bytes
+        assert(strlen($value) <= 253);
         parent::__construct($type, $value);
     }
 

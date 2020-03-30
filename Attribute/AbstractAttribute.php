@@ -38,8 +38,6 @@ abstract class AbstractAttribute implements AttributeInterface
      */
     public function __construct(int $type, $value)
     {
-        // by RADIUS protocol design, the length is limited to 253 bytes
-        assert(strlen($value) <= 253);
         $this->type = $type;
         $this->value = $value;
     }

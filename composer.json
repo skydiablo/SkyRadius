@@ -3,7 +3,8 @@
   "type": "library",
   "description": "The first (known to me) RADIUS server which was implemented natively in PHP!",
   "keywords": [
-    "RADIUS"
+    "RADIUS",
+    "reactPHP"
   ],
   "license": "MIT",
   "authors": [
@@ -17,7 +18,7 @@
   },
   "autoload": {
     "psr-4": {
-      "SkyDiablo\\SkyRadius\\": ""
+      "SkyDiablo\\SkyRadius\\": "src/"
     }
   }
 }

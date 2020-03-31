@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace App;
 
-use SkyDiablo\SkyRadius\src\Dictionary\FreeRadiusDictionaryLoader;
+use SkyDiablo\SkyRadius\Dictionary\FreeRadiusDictionaryLoader;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;

@@ -21,7 +21,6 @@ class Packet implements PacketInterface
     /**
      * Packet constructor.
      * @param int $type
-
      */
     public function __construct(int $type)
     {
@@ -70,11 +69,35 @@ class Packet implements PacketInterface
      * @param int $type
      * @return AttributeInterface[]
      */
-    public function getAttribute(int $type)
+    public function getAttributeByType(int $type)
     {
         return array_filter($this->attributes, function (AttributeInterface $attribute) use ($type) {
             return $this->attributes[$attribute] === $type;
         });
+    }
+
+    /**
+     * @param string $alias
+     * @return AttributeInterface[]
+     */
+    public function getAttributeByAlias(string $alias)
+    {
+        return array_filter($this->attributes, function (AttributeInterface $attribute) use ($alias) {
+            return $attribute->getTypeAlias() === $alias;
+        });
+    }
+
+    /**
+     * @param $identifier
+     * @return AttributeInterface[]
+     */
+    public function getAttribute($identifier)
+    {
+        if (is_int($identifier)) {
+            return $this->getAttributeByType($identifier);
+        } else {
+            return $this->getAttributeByAlias((string)$identifier);
+        }
     }
 
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace App\lib\SkyDiablo\SkyRadius\src\Dictionary;
+namespace SkyDiablo\SkyRadius\src\Dictionary;
 
 
 use SkyDiablo\SkyRadius\AttributeHandler\IntegerAttributeHandler;

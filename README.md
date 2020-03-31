@@ -29,7 +29,7 @@ $radius = new SkyRadius($loop, '0.0.0.0:3500', 'test');
 
 // load freeRADIUS dictionary files
 $loader = new FreeRadiusDictionaryLoader($radius);
-$loader->load('./dictionary/');
+$loader->load('./dictionary/ruckus.dictionary');
 
 // add VendorSpecificAttribute
 $radius->setVsaHandler(529, new IPv4AttributeHandler(), 139, 'Ascend-VSA-User-Acct-Host');

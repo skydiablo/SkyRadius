@@ -32,7 +32,7 @@ class IntegerAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute)
+    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
         /** @var IntegerAttribute $attribute */
         return $this->packInt($attribute->getBit(), $attribute->getValue());

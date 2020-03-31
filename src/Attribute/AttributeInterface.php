@@ -55,6 +55,18 @@ interface AttributeInterface
     const ATTR_CHAP_CHALLENGE = 40; // https://tools.ietf.org/html/rfc2865#section-5.40
     const ATTR_LOGIN_LAT_PORT = 43; // https://tools.ietf.org/html/rfc2865#section-5.43
 
+    // Tunnel-Type
+    const ATTR_TUNNEL_TYPE = 64; //https://tools.ietf.org/html/rfc2868#section-3.1
+    const ATTR_TUNNEL_MEDIUM_TYPE = 65; //https://tools.ietf.org/html/rfc2868#section-3.2
+    const ATTR_TUNNEL_CLIENT_ENDPOINT = 66; //https://tools.ietf.org/html/rfc2868#section-3.3
+    const ATTR_TUNNEL_SERVER_ENDPOINT = 67; //https://tools.ietf.org/html/rfc2868#section-3.4
+    const ATTR_TUNNEL_PASSWORD = 69; //https://tools.ietf.org/html/rfc2868#section-3.5
+    const ATTR_TUNNEL_PRIVATE_GROUP_ID = 81; //https://tools.ietf.org/html/rfc2868#section-3.6
+    const ATTR_TUNNEL_ASSIGNMENT_ID = 82; //https://tools.ietf.org/html/rfc2868#section-3.7
+    const ATTR_TUNNEL_PREFERENCE = 83; //https://tools.ietf.org/html/rfc2868#section-3.8
+    const ATTR_TUNNEL_CLIENT_AUTH_ID = 90; //https://tools.ietf.org/html/rfc2868#section-3.9
+    const ATTR_TUNNEL_SERVER_AUTH_ID = 91; //https://tools.ietf.org/html/rfc2868#section-3.10
+
     const ATTR_TYPE_ALIAS = [
         self::ATTR_USER_NAME => 'User-Name',
         self::ATTR_USER_PASSWORD => 'User-Password',
@@ -97,6 +109,16 @@ interface AttributeInterface
         self::ATTR_NAS_PORT_TYPE => 'NAS-Port-Type',
         self::ATTR_PORT_LIMIT => 'Port-Limit',
         self::ATTR_LOGIN_LAT_PORT => 'Login-LAT-Port',
+        self::ATTR_TUNNEL_TYPE => 'Tunnel-Type',
+        self::ATTR_TUNNEL_MEDIUM_TYPE => 'Tunnel-Medium-Type',
+        self::ATTR_TUNNEL_CLIENT_ENDPOINT => 'Tunnel-Client-Endpoint',
+        self::ATTR_TUNNEL_SERVER_ENDPOINT => 'Tunnel-Server-Endpoint',
+        self::ATTR_TUNNEL_PASSWORD => 'Tunnel-Password',
+        self::ATTR_TUNNEL_PRIVATE_GROUP_ID => 'Tunnel-Private-Group-ID',
+        self::ATTR_TUNNEL_ASSIGNMENT_ID => 'Tunnel-Assignment-ID',
+        self::ATTR_TUNNEL_PREFERENCE => 'Tunnel-Preference',
+        self::ATTR_TUNNEL_CLIENT_AUTH_ID => 'Tunnel-Client-Auth-ID',
+        self::ATTR_TUNNEL_SERVER_AUTH_ID => 'Tunnel-Server-Auth-ID',
     ];
 
     /**

@@ -22,8 +22,9 @@ interface AttributeHandlerInterface
 
     /**
      * @param AttributeInterface $attribute
+     * @param RequestPacket $requestPacket
      * @return string|null
      */
-    public function serializeValue(AttributeInterface $attribute);
+    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket);
 
 }

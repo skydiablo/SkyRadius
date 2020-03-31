@@ -28,7 +28,7 @@ class ChapPasswordAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute)
+    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
         /** @var ChapPasswordAttribute $attribute */
         return $attribute->getChapResponse() . $attribute->getChapResponse();

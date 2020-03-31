@@ -28,9 +28,10 @@ class StringAttributeHandler implements AttributeHandlerInterface
 
     /**
      * @param AttributeInterface $attribute
+     * @param RequestPacket $requestPacket
      * @return string
      */
-    public function serializeValue(AttributeInterface $attribute)
+    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
         return $attribute->getValue();
     }

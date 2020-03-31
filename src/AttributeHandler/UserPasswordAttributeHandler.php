@@ -49,7 +49,7 @@ class UserPasswordAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute)
+    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
 //        throw new \RuntimeException('Not implemented, yet!');
         return 'Server-Side "User-Password" encoding not supported!';

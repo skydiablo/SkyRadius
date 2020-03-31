@@ -6,7 +6,10 @@ declare(strict_types=1);
 namespace SkyDiablo\SkyRadius;
 
 use App\lib\SkyDiablo\SkyRadius\Exception\SilentDiscardException;
+use App\lib\SkyDiablo\SkyRadius\src\AttributeHandler\TunnelPasswordAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\RawAttributeHandler;
+use SkyDiablo\SkyRadius\AttributeHandler\Tunnel3ByteValueAttributeHandler;
+use SkyDiablo\SkyRadius\AttributeHandler\TunnelAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\VendorSpecificAttributeHandler;
 use SkyDiablo\SkyRadius\Connection\Context;
 use Evenement\EventEmitter;
@@ -99,16 +102,7 @@ class SkyRadius extends EventEmitter
     protected function initRFC2865AttributeHandler()
     {
         $this->attributeManager
-            ->setHandler(new VendorSpecificAttributeHandler(), AttributeInterface::ATTR_VENDOR_SPECIFIC)
-            ->setHandler(
-                new UserPasswordAttributeHandler(),
-                AttributeInterface::ATTR_USER_PASSWORD,
-                AttributeInterface::ATTR_TYPE_ALIAS[AttributeInterface::ATTR_USER_PASSWORD]
-            )->setHandler(
-                new ChapPasswordAttributeHandler(),
-                AttributeInterface::ATTR_CHAP_PASSWORD,
-                AttributeInterface::ATTR_TYPE_ALIAS[AttributeInterface::ATTR_CHAP_PASSWORD]
-            );
+            ->setHandler(new VendorSpecificAttributeHandler(), AttributeInterface::ATTR_VENDOR_SPECIFIC);
 
         $initHandlerFunction = function (AttributeHandlerInterface $handler, array $types) {
             foreach ($types as $type) {
@@ -119,6 +113,14 @@ class SkyRadius extends EventEmitter
                 );
             }
         };
+
+        $initHandlerFunction(new UserPasswordAttributeHandler(), [
+            AttributeInterface::ATTR_USER_PASSWORD
+        ]);
+
+        $initHandlerFunction(new ChapPasswordAttributeHandler(), [
+            AttributeInterface::ATTR_CHAP_PASSWORD
+        ]);
 
         $initHandlerFunction(new StringAttributeHandler(), [
             AttributeInterface::ATTR_USER_NAME, AttributeInterface::ATTR_FILTER_ID, AttributeInterface::ATTR_REPLY_MESSAGE,
@@ -142,8 +144,20 @@ class SkyRadius extends EventEmitter
             AttributeInterface::ATTR_NAS_IP_ADDRESS, AttributeInterface::ATTR_FRAMED_IP_ADDRESS, AttributeInterface::ATTR_FRAMED_IP_NETMASK,
             AttributeInterface::ATTR_LOGIN_IP_HOST,
         ]);
-    }
 
+        $initHandlerFunction(new TunnelAttributeHandler(), [
+            AttributeInterface::ATTR_TUNNEL_CLIENT_ENDPOINT, AttributeInterface::ATTR_TUNNEL_SERVER_ENDPOINT, AttributeInterface::ATTR_TUNNEL_PRIVATE_GROUP_ID,
+            AttributeInterface::ATTR_TUNNEL_ASSIGNMENT_ID, AttributeInterface::ATTR_TUNNEL_CLIENT_AUTH_ID, AttributeInterface::ATTR_TUNNEL_SERVER_AUTH_ID,
+        ]);
+
+        $initHandlerFunction(new Tunnel3ByteValueAttributeHandler(), [
+            AttributeInterface::ATTR_TUNNEL_TYPE, AttributeInterface::ATTR_TUNNEL_MEDIUM_TYPE, AttributeInterface::ATTR_TUNNEL_PREFERENCE,
+        ]);
+
+        $initHandlerFunction(new TunnelPasswordAttributeHandler(), [
+            AttributeInterface::ATTR_TUNNEL_PASSWORD,
+        ]);
+    }
 
     /**
      * @param AttributeHandlerInterface $handler
@@ -243,7 +257,7 @@ class SkyRadius extends EventEmitter
     {
         $attributesData = '';
         foreach ($responsePacket->getAttributes() as $attribute) {
-            $attributesData .= $this->attributeManager->serializeAttribute($attribute);
+            $attributesData .= $this->attributeManager->serializeAttribute($attribute, $requestPacket);
         }
         $haystack = $responsePacket->getType() .
             $requestPacket->getIdentifier() .

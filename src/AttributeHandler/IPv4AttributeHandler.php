@@ -28,7 +28,7 @@ class IPv4AttributeHandler extends AbstractAttributeHandler
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute)
+    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
         return $this->packInt32(ip2long($attribute->getValue()));
     }

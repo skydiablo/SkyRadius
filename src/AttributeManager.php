@@ -80,30 +80,32 @@ class AttributeManager
     /**
      * @param AttributeInterface $attribute
      * @param int $type
+     * @param RequestPacket $requestPacket
      * @return string
      */
-    protected function serializeValueByType(AttributeInterface $attribute, int $type)
+    protected function serializeValueByType(AttributeInterface $attribute, int $type, RequestPacket $requestPacket)
     {
         $handlerConf = $this->handler[$type] ?? null;
         if ($handlerConf) {
             /** @var AttributeHandlerInterface $handler */
             $handler = $handlerConf[self::HANDLER];
-            return $handler->serializeValue($attribute);
+            return $handler->serializeValue($attribute, $requestPacket);
         }
     }
 
     /**
      * @param AttributeInterface $attribute
+     * @param RequestPacket $requestPacket
      * @return string|null
      */
-    public function serializeAttribute(AttributeInterface $attribute)
+    public function serializeAttribute(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
         if ($attribute instanceof VendorSpecificAttribute) { //@todo: i hate to handle that in this way -.-
             $type = AttributeInterface::ATTR_VENDOR_SPECIFIC;
         } else {
             $type = $attribute->getType();
         }
-        $attrRawValue = $this->serializeValueByType($attribute, $type); //@todo: max value length should must be 253 bytes!
+        $attrRawValue = $this->serializeValueByType($attribute, $type, $requestPacket); //@todo: max value length should must be 253 bytes!
         if ($attrRawValue) {
             return $this->packInt8($type) .
                 $this->packInt8(strlen($attrRawValue) + 2) . // +2 => type + length

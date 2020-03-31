@@ -34,12 +34,12 @@ interface PacketInterface
      * @param int $type
      * @return AttributeInterface|AttributeInterface[]
      */
-    public function getAttributeByType(int $type);
+    public function getAttributeByType(int ...$type);
 
     /**
      * @param string $alias
      * @return AttributeInterface[]
      */
-    public function getAttributeByAlias(string $alias);
+    public function getAttributeByAlias(string ...$alias);
 
 }

@@ -2,16 +2,12 @@
 
 declare(strict_types=1);
 
-
 namespace SkyDiablo\SkyRadius\Dictionary;
-
 
 use SkyDiablo\SkyRadius\AttributeHandler\IntegerAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\StringAttributeHandler;
 use SkyDiablo\SkyRadius\SkyRadius;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Class FreeRadiusDictionaryLoader
@@ -51,15 +47,13 @@ class FreeRadiusDictionaryLoader
     }
 
     /**
-     * @param string $path
+     * @param string $filenames
      * @throws \Exception
      */
-    public function load(string $path)
+    public function load(string ...$filenames)
     {
-        $finder = new Finder();
-        /** @var SplFileInfo $file */
-        foreach ($finder->in($path)->files() as $file) {
-            $this->loadFile($file->openFile());
+        foreach ($filenames as $filename) {
+            $this->loadFile(new \SplFileObject($filename));
         }
     }
 

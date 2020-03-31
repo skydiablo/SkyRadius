@@ -20,11 +20,19 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class FreeRadiusDictionaryLoader
 {
-
-    const REGEX_RAW_LINE = '!^(?P<KEY>[\w\-]+)[ \t]+(?P<NAME>[\w\-]+)([ \t]+(?P<LOAD>.*))?$!m';
-    const REGEX_VENDOR = '!(?P<NUMBER>\d+)!m'; //@todo: add format handling
-    const REGEX_ATTRIBUTE = '!(?P<OID>\d+)[ \t]+(?P<TYPE>(\w+))!m'; //@todo: add flags
-    const REGEX_VALUE = '!(?P<VALUE_NAME>[\w\-]+)[ \t]+(?P<NUMBER>(\d+))!m';
+    const MATCH_KEY = 'KEY';
+    const MATCH_NAME = 'NAME';
+    const MATCH_LOAD = 'LOAD';
+    const MATCH_NUMBER = 'NUMBER';
+    const MATCH_OID = 'OID';
+    const MATCH_TYPE = 'TYPE';
+    const MATCH_VALUE = 'VALUE';
+    const MATCH_VALUE_NAME = 'VALUE_NAME';
+    const MATCH_VALUE_NUMBER = 'VALUE_NUMBER';
+    const REGEX_RAW_LINE = '!^(?P<' . self::MATCH_KEY . '>[\w\-]+)[ \t]+(?P<' . self::MATCH_NAME . '>[\w\-]+)([ \t]+(?P<' . self::MATCH_LOAD . '>.*))?$!m';
+    const REGEX_VENDOR = '!(?P<' . self::MATCH_NUMBER . '>\d+)!m'; //@todo: add format handling
+    const REGEX_ATTRIBUTE = '!(?P<' . self::MATCH_OID . '>\d+)[ \t]+(?P<' . self::MATCH_TYPE . '>(\w+))!m'; //@todo: add flags
+    const REGEX_VALUE = '!(?P<' . self::MATCH_VALUE_NAME . '>[\w\-]+)[ \t]+(?P<' . self::MATCH_VALUE_NUMBER . '>(\d+))!m';
 
     /**
      * @var SkyRadius
@@ -69,39 +77,39 @@ class FreeRadiusDictionaryLoader
             $line = trim($file->fgets());
             $matches = $subMatches = [];
             if (preg_match(self::REGEX_RAW_LINE, $line, $matches)) {
-                switch (strtoupper($matches['KEY'])) {
+                switch (strtoupper($matches[self::MATCH_KEY])) {
                     case 'VENDOR': // VENDOR vendor-name number [format=...]
-                        if (preg_match(self::REGEX_VENDOR, $matches['LOAD'], $subMatches)) {
-                            $vendorIds[$matches['NAME']] = (int)$subMatches['NUMBER'];
+                        if (preg_match(self::REGEX_VENDOR, $matches[self::MATCH_LOAD], $subMatches)) {
+                            $vendorIds[$matches[self::MATCH_NAME]] = (int)$subMatches[self::MATCH_NUMBER];
                         }
                         break;
                     case 'BEGIN-VENDOR': // BEGIN-VENDOR vendor-name
-                        if (!($currentVendorId = $vendorIds[$matches['NAME']] ?? null)) {
-                            throw new \Exception(sprintf('Vendor "%s" not found, can not load freeRADIUS dictionary file: %s', $matches['NAME'], $file->getPathname()));
+                        if (!($currentVendorId = $vendorIds[$matches[self::MATCH_NAME]] ?? null)) {
+                            throw new \Exception(sprintf('Vendor "%s" not found, can not load freeRADIUS dictionary file: %s', $matches[self::MATCH_NAME], $file->getPathname()));
                         }
                         break;
                     case 'END_VENDOR':
                         $currentVendorId = null;
                         break;
                     case 'ATTRIBUTE': // ATTRIBUTE name oid type [flags]
-                        if (preg_match(self::REGEX_ATTRIBUTE, $matches['LOAD'], $subMatches)) {
-                            $attributesByVendorId[$currentVendorId][$matches['NAME']] ?? $attributesByVendorId[$currentVendorId][$matches['NAME']] = [];
-                            $attributesByVendorId[$currentVendorId][$matches['NAME']] += [
-                                'OID' => (int)$subMatches['OID'],
-                                'TYPE' => $subMatches['TYPE'],
+                        if (preg_match(self::REGEX_ATTRIBUTE, $matches[self::MATCH_LOAD], $subMatches)) {
+                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] = [];
+                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] += [
+                                self::MATCH_OID => (int)$subMatches[self::MATCH_OID],
+                                self::MATCH_TYPE => $subMatches[self::MATCH_TYPE],
                             ];
                         }
                         break;
                     case 'VALUE': // VALUE attribute-name value-name number
-                        if (preg_match(self::REGEX_VALUE, $matches['LOAD'], $subMatches)) {
-                            $attributesByVendorId[$currentVendorId][$matches['NAME']]['VALUE'] ?? $attributesByVendorId[$currentVendorId][$matches['NAME']]['VALUE'] = [];
-                            $attributesByVendorId[$currentVendorId][$matches['NAME']]['VALUE'] += [
-                                (int)$subMatches['NUMBER'] => $subMatches['VALUE_NAME']
+                        if (preg_match(self::REGEX_VALUE, $matches[self::MATCH_LOAD], $subMatches)) {
+                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] = [];
+                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] += [
+                                (int)$subMatches[self::MATCH_VALUE_NUMBER] => $subMatches[self::MATCH_VALUE_NAME]
                             ];
                         }
                         break;
                     case '$INCLUDE': // $INCLUDE filename
-                        $this->loadFile(new \SplFileObject($matches['NAME']));
+                        $this->loadFile(new \SplFileObject($matches[self::MATCH_NAME]));
                         break;
                 }
             }
@@ -112,20 +120,20 @@ class FreeRadiusDictionaryLoader
             foreach ($attributesByVendorId[$vendorId] as $attrName => $attr) {
                 $this->skyRadius->setVsaHandler(
                     $vendorId,
-                    $this->getAttributeHandlerByType($attr['TYPE']),
-                    $attr['OID'],
+                    $this->getAttributeHandlerByType($attr[self::MATCH_TYPE]),
+                    $attr[self::MATCH_OID],
                     $attrName,
-                    $attr['VALUE'] ?? []
+                    $attr[self::MATCH_VALUE] ?? []
                 );
             }
         }
 
         foreach ($attributesByVendorId[null] ?? [] as $attrName => $attr) {
             $this->skyRadius->setHandler(
-                $this->getAttributeHandlerByType($attr['TYPE']),
-                $attr['OID'],
+                $this->getAttributeHandlerByType($attr[self::MATCH_TYPE]),
+                $attr[self::MATCH_OID],
                 $attrName,
-                $attr['VALUE'] ?? []
+                $attr[self::MATCH_VALUE] ?? []
             );
         }
 

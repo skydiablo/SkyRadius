@@ -83,7 +83,7 @@ class Packet implements PacketInterface
     public function getAttributeByAlias(string ...$alias)
     {
         return array_filter($this->getAttributes(), function (AttributeInterface $attribute) use ($alias) {
-            return in_array($attribute->getTypeAlias() , $alias, true);
+            return in_array($attribute->getTypeAlias(), $alias, true);
         });
     }
 
@@ -91,13 +91,18 @@ class Packet implements PacketInterface
      * @param $identifier
      * @return AttributeInterface[]
      */
-    public function getAttribute(...$identifier)
+    public function getAttribute(...$identifiers)
     {
-        if (is_int($identifier)) {
-            return $this->getAttributeByType(...$identifier);
-        } else {
-            return $this->getAttributeByAlias(...(string)$identifier);
-        }
+        $filterIntParams = function (array $params, bool $isInt = true) {
+            return array_filter($params, function ($param) use ($isInt) {
+                return is_int($param) ? $isInt : !$isInt;
+            });
+        };
+
+        return array_merge(
+            $this->getAttributeByType(...$filterIntParams($identifiers)),
+            $this->getAttributeByAlias(...$filterIntParams($identifiers, false))
+        );
     }
 
 }

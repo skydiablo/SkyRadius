@@ -1,8 +1,8 @@
 # SkyRadius
 
 The first (known to me) RADIUS server which was implemented natively in PHP! Based on the incredible
-possibilities of ReachtPHP I was now able to write this library. Currently only RFC2865 is implemented,
-should follow RFC2866 + RFC2867 + RFC2868 (I'm always happy about PRs ;) ).
+possibilities of ReachtPHP I was able to write this library. Currently RFC2865 + RFC2868 are implemented,
+should follow RFC2866 + RFC2867 (I'm always happy about PRs ;) ).
 
 ## Example
 

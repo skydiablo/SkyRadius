@@ -40,10 +40,10 @@ class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
         $b = md5($psk . $requestPacket->getAuthenticator() . $salt, true);
         $p = str_split($attribute->getValue(), 16);
         // fill last element with 0x00 values to bring all chunks to 16 bytes
-        $p[] = str_pad(array_pop($p), 16, 0x00, STR_PAD_RIGHT);
+        $p[] = str_pad(array_pop($p), 16, chr(0x00), STR_PAD_RIGHT);
         foreach ($p as $subP) {
             $c = $subP ^ $b;
-            $b = md5($psk . $c);
+            $b = md5($psk . $c, true);
             $out .= $c;
         }
         return $out;

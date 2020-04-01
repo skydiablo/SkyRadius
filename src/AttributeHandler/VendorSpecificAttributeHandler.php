@@ -62,8 +62,9 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
         $vsaRawAttribute = $this->rawAttributeHandler->parseRawAttribute($rawAttribute->getValue(), 4); //skip first 4 bytes
         $attributeHandler = $this->attributeManagerList[$vendorId] ?? null;
         if ($attributeHandler) {
-            $attr = $attributeHandler->deserializeRawAttribute($vsaRawAttribute, $requestPacket);
-            return new VendorSpecificAttribute($vendorId, $attr);
+            if ($attr = $attributeHandler->deserializeRawAttribute($vsaRawAttribute, $requestPacket)) {
+                return new VendorSpecificAttribute($vendorId, $attr);
+            }
         }
     }
 

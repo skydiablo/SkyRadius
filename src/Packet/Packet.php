@@ -71,7 +71,7 @@ class Packet implements PacketInterface
      */
     public function getAttributeByType(int ...$type)
     {
-        return array_filter($this->attributes, function (AttributeInterface $attribute) use ($type) {
+        return array_filter($this->getAttributes(), function (AttributeInterface $attribute) use ($type) {
             return in_array($this->attributes[$attribute], $type, true);
         });
     }
@@ -82,7 +82,7 @@ class Packet implements PacketInterface
      */
     public function getAttributeByAlias(string ...$alias)
     {
-        return array_filter($this->attributes, function (AttributeInterface $attribute) use ($alias) {
+        return array_filter($this->getAttributes(), function (AttributeInterface $attribute) use ($alias) {
             return in_array($attribute->getTypeAlias() , $alias, true);
         });
     }

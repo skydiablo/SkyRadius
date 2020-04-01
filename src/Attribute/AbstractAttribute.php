@@ -61,33 +61,37 @@ abstract class AbstractAttribute implements AttributeInterface
     /**
      * @return string
      */
-    public function getTypeAlias(): string
+    public function getTypeAlias(): ?string
     {
         return $this->typeAlias;
     }
 
     /**
      * @param string $typeAlias
+     * @return AbstractAttribute
      */
-    public function setTypeAlias(string $typeAlias): void
+    public function setTypeAlias(string $typeAlias): AbstractAttribute
     {
         $this->typeAlias = $typeAlias;
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getValueAlias(): string
+    public function getValueAlias(): ?string
     {
         return $this->valueAlias;
     }
 
     /**
      * @param string $valueAlias
+     * @return AbstractAttribute
      */
-    public function setValueAlias(string $valueAlias): void
+    public function setValueAlias(string $valueAlias): AbstractAttribute
     {
         $this->valueAlias = $valueAlias;
+        return $this;
     }
 
 }

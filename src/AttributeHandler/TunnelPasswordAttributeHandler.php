@@ -3,13 +3,12 @@
 declare(strict_types=1);
 
 
-namespace App\lib\SkyDiablo\SkyRadius\src\AttributeHandler;
+namespace SkyDiablo\SkyRadius\AttributeHandler;
 
 
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\TunnelAttribute;
-use SkyDiablo\SkyRadius\AttributeHandler\AbstractAttributeHandler;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
 class TunnelPasswordAttributeHandler extends AbstractAttributeHandler

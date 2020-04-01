@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\lib\SkyDiablo\SkyRadius\Exception;
+namespace SkyDiablo\SkyRadius\Exception;
 
 /**
  * Class SkyRadiusException

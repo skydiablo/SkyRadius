@@ -5,8 +5,8 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
 
-use App\lib\SkyDiablo\SkyRadius\Exception\SilentDiscardException;
-use App\lib\SkyDiablo\SkyRadius\src\AttributeHandler\TunnelPasswordAttributeHandler;
+use SkyDiablo\SkyRadius\Exception\SilentDiscardException;
+use SkyDiablo\SkyRadius\AttributeHandler\TunnelPasswordAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\RawAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\Tunnel3ByteValueAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\TunnelAttributeHandler;

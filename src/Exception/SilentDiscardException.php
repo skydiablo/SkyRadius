@@ -6,7 +6,7 @@ namespace SkyDiablo\SkyRadius\Exception;
 
 /**
  * Class SilentDiscardPackageException
- * @package App\lib\SkyDiablo\SkyRadius\Exception
+ * @package SkyDiablo\SkyRadius\Exception
  */
 class SilentDiscardException extends SkyRadiusException
 {

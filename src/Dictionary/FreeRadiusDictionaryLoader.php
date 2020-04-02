@@ -11,7 +11,7 @@ use SkyDiablo\SkyRadius\SkyRadius;
 
 /**
  * Class FreeRadiusDictionaryLoader
- * @package App\lib\SkyDiablo\SkyRadius\src\Dictionary\freeRADIUS
+ * @package SkyDiablo\SkyRadius\src\Dictionary\freeRADIUS
  * @see https://freeradius.org/radiusd/man/dictionary.html
  */
 class FreeRadiusDictionaryLoader

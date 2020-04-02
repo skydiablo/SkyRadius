@@ -259,19 +259,22 @@ class SkyRadius extends EventEmitter
         foreach ($responsePacket->getAttributes() as $attribute) {
             $attributesData .= $this->attributeManager->serializeAttribute($attribute, $requestPacket);
         }
-        $haystack = $responsePacket->getType() .
-            $requestPacket->getIdentifier() .
+        $header = $this->packInt8($responsePacket->getType());
+        $header .= $this->packInt8($requestPacket->getIdentifier());
+        // +1 type as byte
+        // +1 identifier as byte
+        // +16 = response-auth
+        // +2 = 16bit/2byte int for "length" itself)
+        $header .= $this->packInt16(strlen($attributesData) + 20);
+        $haystack =
+            $header . // type + id + length
             $requestPacket->getAuthenticator() .
             $attributesData .
             $this->psk;
         $responseAuth = md5($haystack, true);
 
-        $header = $this->packInt8($responsePacket->getType());
-        $header .= $this->packInt8($requestPacket->getIdentifier());
-        $length = strlen($header) + strlen($responseAuth) + strlen($attributesData) + 2; // +2 = 16bit/2byte int for "length" itself
-        $lenAsBytes = $this->packInt16($length);
 
-        return $header . $lenAsBytes . $responseAuth . $attributesData;
+        return $header . $responseAuth . $attributesData;
     }
 
 }

@@ -14,6 +14,17 @@ use SkyDiablo\SkyRadius\Packet\RequestPacket;
 class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
 {
 
+    private $psk;
+
+    /**
+     * TunnelPasswordAttributeHandler constructor.
+     * @param $psk
+     */
+    public function __construct($psk)
+    {
+        $this->psk = $psk;
+    }
+
     /**
      * @inheritDoc
      */
@@ -30,20 +41,19 @@ class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
      */
     public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
-        $psk = $requestPacket->getPsk();
         $salt = \random_bytes(2);
         // The most significant bit (leftmost) of the Salt field MUST be set (1)
         $salt[0] = chr(ord($salt[0]) | (1 << 7)); //@todo: any ideas to simplification this?
 
         $out = $this->packInt8($attribute->getTag()) . $salt;
 
-        $b = md5($psk . $requestPacket->getAuthenticator() . $salt, true);
+        $b = md5($this->psk . $requestPacket->getAuthenticator() . $salt, true);
         $p = str_split($attribute->getValue(), 16);
         // fill last element with 0x00 values to bring all chunks to 16 bytes
         $p[] = str_pad(array_pop($p), 16, chr(0x00), STR_PAD_RIGHT);
         foreach ($p as $subP) {
             $c = $subP ^ $b;
-            $b = md5($psk . $c, true);
+            $b = md5($this->psk . $c, true);
             $out .= $c;
         }
         return $out;

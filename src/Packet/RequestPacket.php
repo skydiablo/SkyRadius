@@ -19,23 +19,16 @@ class RequestPacket extends Packet
     private $authenticator;
 
     /**
-     * @var string
-     */
-    private $psk;
-
-    /**
      * Packet constructor.
      * @param int $type
      * @param int $identifier
      * @param string $authenticator
-     * @param string $psk
      */
-    public function __construct(int $type, int $identifier, string $authenticator, string $psk)
+    public function __construct(int $type, int $identifier, string $authenticator)
     {
         parent::__construct($type);
         $this->identifier = $identifier;
         $this->authenticator = $authenticator;
-        $this->psk = $psk;
     }
 
     /**
@@ -52,14 +45,6 @@ class RequestPacket extends Packet
     public function getAuthenticator(): string
     {
         return $this->authenticator;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPsk(): string
-    {
-        return $this->psk;
     }
 
 }

@@ -18,6 +18,18 @@ use SkyDiablo\SkyRadius\Packet\RequestPacket;
 class UserPasswordAttributeHandler implements AttributeHandlerInterface
 {
 
+    private $psk;
+
+    /**
+     * UserPasswordAttributeHandler constructor.
+     * @param $psk
+     */
+    public function __construct($psk)
+    {
+        $this->psk = $psk;
+    }
+
+
     /**
      * @inheritDoc
      */
@@ -36,9 +48,8 @@ class UserPasswordAttributeHandler implements AttributeHandlerInterface
     {
         $result = '';
         $salt = $packet->getAuthenticator();
-        $psk = $packet->getPsk();
         foreach (str_split($encryptedPassword, 16) as $chunk) {
-            $v = md5($psk . $salt, true);
+            $v = md5($this->psk . $salt, true);
             $result .= $chunk ^ $v; // XOR
             $salt = $chunk;
         }

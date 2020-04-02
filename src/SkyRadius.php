@@ -114,7 +114,7 @@ class SkyRadius extends EventEmitter
             }
         };
 
-        $initHandlerFunction(new UserPasswordAttributeHandler(), [
+        $initHandlerFunction(new UserPasswordAttributeHandler($this->psk), [
             AttributeInterface::ATTR_USER_PASSWORD
         ]);
 
@@ -154,7 +154,7 @@ class SkyRadius extends EventEmitter
             AttributeInterface::ATTR_TUNNEL_TYPE, AttributeInterface::ATTR_TUNNEL_MEDIUM_TYPE, AttributeInterface::ATTR_TUNNEL_PREFERENCE,
         ]);
 
-        $initHandlerFunction(new TunnelPasswordAttributeHandler(), [
+        $initHandlerFunction(new TunnelPasswordAttributeHandler($this->psk), [
             AttributeInterface::ATTR_TUNNEL_PASSWORD,
         ]);
     }
@@ -236,7 +236,7 @@ class SkyRadius extends EventEmitter
             throw SilentDiscardException::create();
         }
 
-        $requestPacket = new RequestPacket($type, $id, $authenticator, $this->psk);
+        $requestPacket = new RequestPacket($type, $id, $authenticator);
         while ($pos < $len) {
             $rawAttr = $this->rawAttributeHandler->parseRawAttribute($data, $pos);
             $pos += $rawAttr->getAttributeLength();

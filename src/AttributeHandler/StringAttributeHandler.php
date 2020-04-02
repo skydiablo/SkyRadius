@@ -16,6 +16,9 @@ use SkyDiablo\SkyRadius\Packet\RequestPacket;
 class StringAttributeHandler implements AttributeHandlerInterface
 {
 
+    const REGEX_HEX_VALUE = '!^0x[[:xdigit:]]+$!i';
+    const REGEX_BIN_VALUE = '!^0b[01]+$!i';
+
     /**
      * @param RawAttribute $rawAttribute
      * @param RequestPacket $requestPacket
@@ -33,7 +36,15 @@ class StringAttributeHandler implements AttributeHandlerInterface
      */
     public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
-        return $attribute->getValue();
+        $value = $attribute->getValue();
+        switch (true) {
+            case (bool)preg_match(self::REGEX_HEX_VALUE, $value): // eg.: 0xFF00AACCBB55DD
+                return hex2bin(substr($value, 2)); //@todo: maybe faster: return hex2bin(base_convert($value, 16, 16));
+            case (bool)preg_match(self::REGEX_BIN_VALUE, $value): // eg.: 0b11010010000110101
+                return hex2bin(base_convert($value, 2, 16)); //@todo: is there any better option available?
+            default:
+                return $value;
+        }
     }
 
 }

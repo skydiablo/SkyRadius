@@ -261,10 +261,10 @@ class SkyRadius extends EventEmitter
         }
         $header = $this->packInt8($responsePacket->getType());
         $header .= $this->packInt8($requestPacket->getIdentifier());
-        // +1 type as byte
-        // +1 identifier as byte
-        // +16 = response-auth
-        // +2 = 16bit/2byte int for "length" itself)
+        // +1 type as byte       \
+        // +1 identifier as byte  \  = 20 byte
+        // +16 = response-auth    /
+        // +2 = "length" itself  /
         $header .= $this->packInt16(strlen($attributesData) + 20);
         $haystack =
             $header . // type + id + length

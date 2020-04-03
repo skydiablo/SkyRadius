@@ -1,0 +1,7 @@
+
+VENDOR          Hostapd              39014                                                                                                                                                                          
+
+BEGIN-VENDOR Hostapd
+ATTRIBUTE       Hostapd-PSK          1      integer    Hostapd
+ATTRIBUTE       Hostapd-Passphrase   2      string     Hostapd
+END-VENDOR Hostapd

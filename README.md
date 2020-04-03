@@ -69,3 +69,8 @@ In my setup I was able to handle 15k requests/sec at 90% CPU load with the demo-
   - YAML
   - JSON
 - UnitTest
+
+## Thanks
+
+- Thank you [reactPHP](https://reactphp.org/) for your brilliant work!
+- [BaconFist](https://github.com/BaconFist) has provided the benchmark server, thank you!

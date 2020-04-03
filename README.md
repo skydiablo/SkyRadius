@@ -61,7 +61,7 @@ echo "User-Name=test,User-Password=mypass,Framed-Protocol=PPP" | radclient -n 10
 In my setup I was able to handle 15k requests/sec at 90% CPU load with the demo-server mentioned here. For this I have 
 5x started the radclient with `-n 40000` on the same server and piped the output against `> /dev/null`. Used CPU: `Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz` with 2 cores:
 
-![15k Benchmark Test](../Example/15k-test-result.png?raw=true "15k Benchmark Test")
+![15k Benchmark Test](./Example/15k-test-result.png?raw=true "15k Benchmark Test")
 
 ## TODOs
 

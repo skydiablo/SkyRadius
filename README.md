@@ -58,9 +58,10 @@ Extended to the given example above, you can stress-test your `SkyDiablo/SkyRadi
 echo "User-Name=test,User-Password=mypass,Framed-Protocol=PPP" | radclient -n 1000 -c 99999999999 127.0.0.1:3500 auth test
 ```
 
-So far I could not do any real tests, but first tests have shown that it is possible to more than 500 requests/sec.
-I couldn't create more requests because my CPU was down. The SkyRadius-Server ran with 15% CPU and 10MB RAM. Here I 
-would be pleased about experience values of users.
+In my setup I was able to handle 15k requests/sec at 90% CPU load with the demo-server mentioned here. For this I have 
+5x started the radclient with `-n 40000` on the same server and piped the output against `> /dev/null`. Used CPU: `Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz` with 2 cores:
+
+![15k Benchmark Test](../Example/15k-test-result.png?raw=true "15k Benchmark Test")
 
 ## TODOs
 

@@ -10,6 +10,7 @@ use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 use SkyDiablo\SkyRadius\Connection\Context;
+use SkyDiablo\SkyRadius\Exception\SkyRadiusException;
 use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\SkyRadius;
 
@@ -26,6 +27,10 @@ $loader->load(__DIR__ . '/dictionary/hostapd.dictionary');
 $radius->setVsaHandler(529, new IPv4AttributeHandler(), 139, 'Ascend-VSA-User-Acct-Host');
 
 $packetCounter = $lastCount = 0;
+
+$radius->on(SkyRadius::EVENT_ERROR, function (SkyRadiusException $e) {
+    echo sprintf("ERROR: %s [%d]\n", $e->getMessage(), $e->getCode());
+});
 
 $radius->on(SkyRadius::EVENT_PACKET, function (Context $context) use (&$packetCounter) {
 

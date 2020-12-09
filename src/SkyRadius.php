@@ -23,6 +23,7 @@ use SkyDiablo\SkyRadius\AttributeHandler\IntegerAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\StringAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\UserPasswordAttributeHandler;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 use SkyDiablo\SkyRadius\Packet\ResponsePacket;
 use SkyDiablo\SkyRadius\Helper\UnPackInteger;
@@ -81,7 +82,6 @@ class SkyRadius extends EventEmitter
             ->then(function (Socket $socket) {
                 $socket->on('message', function (string $raw, string $peer, Socket $server) {
                     try {
-
                         $context = new Context($this->handleRawInput($raw));
                         $this->emit(self::EVENT_PACKET, [$context]);
                         $this->sendResponse($context, $peer, $server);
@@ -236,7 +236,12 @@ class SkyRadius extends EventEmitter
             throw SilentDiscardException::create();
         }
 
-        $requestPacket = new RequestPacket($type, $id, $authenticator);
+        $requestPacket = new RequestPacket($type, $id, $authenticator, $data);
+
+        if (!$this->validateRequest($requestPacket)) {
+            throw SilentDiscardException::create();
+        }
+
         while ($pos < $len) {
             $rawAttr = $this->rawAttributeHandler->parseRawAttribute($data, $pos);
             $pos += $rawAttr->getAttributeLength();
@@ -245,6 +250,28 @@ class SkyRadius extends EventEmitter
             }
         }
         return $requestPacket;
+    }
+
+    /**
+     * @param RequestPacket $requestPacket
+     * @return bool
+     */
+    protected function validateRequest(RequestPacket $requestPacket): bool
+    {
+        switch ($requestPacket->getType()) {
+            case PacketInterface::ACCOUNTING_REQUEST:
+                /*
+                The Request Authenticator field in Accounting-Request packets contains a
+                one-way MD5 hash calculated over a stream of octets consisting of the
+                Code + Identifier + Length + 16 zero octets + request attributes + shared secret
+                (where + indicates concatenation).
+                */
+                $haystack = substr_replace($requestPacket->getRaw(), str_repeat(chr(0x00), 16), 4, 16);
+                $md5 = md5($haystack . $this->psk, true);
+                return $md5 === $requestPacket->getAuthenticator();
+            default:
+                return true;
+        }
     }
 
     /**

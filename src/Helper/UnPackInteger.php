@@ -103,7 +103,7 @@ trait UnPackInteger
      */
     protected function packInt64(int $integer)
     {
-        return $this->packInt(IntegerAttribute::BIT_64, $integer, $startPos);
+        return $this->packInt(IntegerAttribute::BIT_64, $integer);
     }
 
 }

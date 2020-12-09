@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
 
+use SkyDiablo\SkyRadius\Exception\InvalidResponseException;
 use SkyDiablo\SkyRadius\Exception\SilentDiscardException;
 use SkyDiablo\SkyRadius\AttributeHandler\TunnelPasswordAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\RawAttributeHandler;
@@ -196,9 +197,13 @@ class SkyRadius extends EventEmitter
      * @param Context $context
      * @param string $peer
      * @param Socket $socket
+     * @throws InvalidResponseException
      */
     protected function sendResponse(Context $context, string $peer, Socket $socket)
     {
+        if (!$this->validateResponse($context)) {
+            throw InvalidResponseException::create();
+        }
         $socket->send(
             $this->serializeResponse(
                 $context->getResponse(),
@@ -206,6 +211,26 @@ class SkyRadius extends EventEmitter
             ),
             $peer
         );
+    }
+
+    /**
+     * @param Context $context
+     * @return bool
+     */
+    protected function validateResponse(Context $context): bool
+    {
+        switch ($context->getRequest()->getType()) {
+            case PacketInterface::ACCESS_REQUEST:
+                return in_array($context->getResponse()->getType(), [
+                    //an ACCESS-REQUEST must have an ACCESS-RESPONSE
+                    PacketInterface::ACCESS_ACCEPT, PacketInterface::ACCESS_REJECT
+                ], true);
+            case PacketInterface::ACCOUNTING_REQUEST;
+                //an ACCOUNTING-REQUEST must have an ACCOUNTING-RESPONSE
+                return $context->getResponse()->getType() === PacketInterface::ACCOUNTING_RESPONSE;
+            default:
+                return true;
+        }
     }
 
     /**

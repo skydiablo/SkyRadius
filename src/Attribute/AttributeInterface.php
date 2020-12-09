@@ -31,8 +31,8 @@ interface AttributeInterface
     const ATTR_TERMINATION_ACTION = 29; // https://tools.ietf.org/html/rfc2865#section-5.29
     const ATTR_FRAMED_APPLETALK_LINK = 37; // https://tools.ietf.org/html/rfc2865#section-5.37
     const ATTR_FRAMED_APPLETALK_NETWORK = 38; // https://tools.ietf.org/html/rfc2865#section-5.38
-    const ATTR_NAS_PORT_TYPE = 41; // https://tools.ietf.org/html/rfc2865#section-5.41
-    const ATTR_PORT_LIMIT = 42; // https://tools.ietf.org/html/rfc2865#section-5.42
+    const ATTR_NAS_PORT_TYPE = 61; // https://tools.ietf.org/html/rfc2865#section-5.41
+    const ATTR_PORT_LIMIT = 62; // https://tools.ietf.org/html/rfc2865#section-5.42
 
     // String
     const ATTR_USER_NAME = 1; // https://tools.ietf.org/html/rfc2865#section-5.1
@@ -52,8 +52,8 @@ interface AttributeInterface
     const ATTR_LOGIN_LAT_NODE = 35; // https://tools.ietf.org/html/rfc2865#section-5.35
     const ATTR_LOGIN_LAT_GROUP = 36; // https://tools.ietf.org/html/rfc2865#section-5.36
     const ATTR_FRAMED_APPLETALK_ZONE = 39; // https://tools.ietf.org/html/rfc2865#section-5.39
-    const ATTR_CHAP_CHALLENGE = 40; // https://tools.ietf.org/html/rfc2865#section-5.40
-    const ATTR_LOGIN_LAT_PORT = 43; // https://tools.ietf.org/html/rfc2865#section-5.43
+    const ATTR_CHAP_CHALLENGE = 60; // https://tools.ietf.org/html/rfc2865#section-5.40
+    const ATTR_LOGIN_LAT_PORT = 63; // https://tools.ietf.org/html/rfc2865#section-5.43
 
     // Tunnel-Type
     const ATTR_TUNNEL_TYPE = 64; //https://tools.ietf.org/html/rfc2868#section-3.1
@@ -66,6 +66,73 @@ interface AttributeInterface
     const ATTR_TUNNEL_PREFERENCE = 83; //https://tools.ietf.org/html/rfc2868#section-3.8
     const ATTR_TUNNEL_CLIENT_AUTH_ID = 90; //https://tools.ietf.org/html/rfc2868#section-3.9
     const ATTR_TUNNEL_SERVER_AUTH_ID = 91; //https://tools.ietf.org/html/rfc2868#section-3.10
+
+    const ATTR_ACCT_STATUS_TYPE = 40;
+    const ATTR_ACCT_DELAY_TIME = 41;
+    const ATTR_ACCT_INPUT_OCTETS = 42;
+    const ATTR_ACCT_OUTPUT_OCTETS = 43;
+    const ATTR_ACCT_SESSION_ID = 44;
+    const ATTR_ACCT_AUTHENTIC = 45;
+    const ATTR_ACCT_SESSION_TIME = 46;
+    const ATTR_ACCT_INPUT_PACKETS = 47;
+    const ATTR_ACCT_OUTPUT_PACKETS = 48;
+    const ATTR_ACCT_TERMINATE_CAUSE = 49;
+    const ATTR_ACCT_MULTI_SESSION_ID = 50;
+    const ATTR_ACCT_LINK_COUNT = 51;
+
+    //rfc2869
+    const ATTR_ACCT_INPUT_GIGAWORDS = 52;
+    const ATTR_ACCT_OUTPUT_GIGAWORDS = 53;
+    const ATTR_EVENT_TIMESTAMP = 55;
+    const ATTR_ARAP_PASSWORD = 70; //todo: not implemented yet
+    const ATTR_ARAP_FEATURES = 71; //todo: not implemented yet
+    const ATTR_ARAP_ZONE_ACCESS = 72; //todo: not implemented yet
+    const ATTR_ARAP_SECURITY = 73; //todo: not implemented yet
+    const ATTR_ARAP_SECURITY_DATA = 74; //todo: not implemented yet
+    const ATTR_PASSWORD_RETRY = 75;
+    const ATTR_PROMPT = 76;
+    const ATTR_CONNECT_INFO = 77;
+    const ATTR_CONFIGURATION_TOKEN = 78;
+    const ATTR_EAP_MESSAGE = 79; //todo: may not implemented yet
+    const ATTR_MESSAGE_AUTHENTICATOR = 80; //todo: may not implemented yet
+    const ATTR_ARAP_CHALLENGE_RESPONSE = 84; //todo: not implemented yet
+    const ATTR_ACCT_INTERIM_INTERVAL = 85;
+    const ATTR_NAS_PORT_ID = 87;
+    const ATTR_FRAMED_POOL = 88;
+
+
+    // checkout RFC 2866 (https://tools.ietf.org/html/rfc2866)
+    const ATTR_ACCT_STATUS_VALUE_START = 1;
+    const ATTR_ACCT_STATUS_VALUE_STOP = 2;
+    const ATTR_ACCT_STATUS_VALUE_INTERIM_UPDATE = 3;
+    const ATTR_ACCT_STATUS_VALUE_ACCOUNTING_ON = 7;
+    const ATTR_ACCT_STATUS_VALUE_ACCOUNTING_OFF = 8;
+
+    const ATTR_ACCT_AUTHENTIC_RADIUS = 1;
+    const ATTR_ACCT_AUTHENTIC_LOCAL = 2;
+    const ATTR_ACCT_AUTHENTIC_REMOTE = 3;
+
+    const ATTR_ACCT_TERMINATE_CAUSE_USER_REQUEST = 1;
+    const ATTR_ACCT_TERMINATE_CAUSE_LOST_CARRIER = 2;
+    const ATTR_ACCT_TERMINATE_CAUSE_LOST_SERVICE = 3;
+    const ATTR_ACCT_TERMINATE_CAUSE_IDLE_TIMEOUT = 4;
+    const ATTR_ACCT_TERMINATE_CAUSE_SESSION_TIMEOUT = 5;
+    const ATTR_ACCT_TERMINATE_CAUSE_ADMIN_RESET = 6;
+    const ATTR_ACCT_TERMINATE_CAUSE_ADMIN_REBOOT = 7;
+    const ATTR_ACCT_TERMINATE_CAUSE_PORT_ERROR = 8;
+    const ATTR_ACCT_TERMINATE_CAUSE_NAS_ERROR = 9;
+    const ATTR_ACCT_TERMINATE_CAUSE_NAS_REQUEST = 10;
+    const ATTR_ACCT_TERMINATE_CAUSE_NAS_REBOOT = 11;
+    const ATTR_ACCT_TERMINATE_CAUSE_PORT_UNNEEDED = 12;
+    const ATTR_ACCT_TERMINATE_CAUSE_PORT_PREEMPTED = 13;
+    const ATTR_ACCT_TERMINATE_CAUSE_PORT_SUSPENDED = 14;
+    const ATTR_ACCT_TERMINATE_CAUSE_SERVICE_UNAVAILABLE = 15;
+    const ATTR_ACCT_TERMINATE_CAUSE_CALLBACK = 16;
+    const ATTR_ACCT_TERMINATE_CAUSE_USER_ERROR = 17;
+    const ATTR_ACCT_TERMINATE_CAUSE_HOST_REQUEST = 18;
+
+    const ATTR_PROMPT_NO_ECHO = 0;
+    const ATTR_PROMPT_ECHO = 1;
 
     const ATTR_TYPE_ALIAS = [
         self::ATTR_USER_NAME => 'User-Name',
@@ -119,6 +186,39 @@ interface AttributeInterface
         self::ATTR_TUNNEL_PREFERENCE => 'Tunnel-Preference',
         self::ATTR_TUNNEL_CLIENT_AUTH_ID => 'Tunnel-Client-Auth-ID',
         self::ATTR_TUNNEL_SERVER_AUTH_ID => 'Tunnel-Server-Auth-ID',
+
+        self::ATTR_ACCT_STATUS_TYPE => 'Acct-Status-Type',
+        self::ATTR_ACCT_DELAY_TIME => 'Acct-Delay-Time',
+        self::ATTR_ACCT_INPUT_OCTETS => 'Acct-Input-Octets',
+        self::ATTR_ACCT_OUTPUT_OCTETS => 'Acct-Output-Octets',
+        self::ATTR_ACCT_SESSION_ID => 'Acct-Session-Id',
+        self::ATTR_ACCT_AUTHENTIC => 'Acct-Authentic',
+        self::ATTR_ACCT_SESSION_TIME => 'Acct-Session-Time',
+        self::ATTR_ACCT_INPUT_PACKETS => 'Acct-Input-Packets',
+        self::ATTR_ACCT_OUTPUT_PACKETS => 'Acct-Output-Packets',
+        self::ATTR_ACCT_TERMINATE_CAUSE => 'Acct-Terminate-Cause',
+        self::ATTR_ACCT_MULTI_SESSION_ID => 'Acct-Multi-Session-Id',
+        self::ATTR_ACCT_LINK_COUNT => 'Acct-Link-Count',
+        self::ATTR_ACCT_INPUT_GIGAWORDS => 'Acct-Input-Gigawords',
+        self::ATTR_ACCT_OUTPUT_GIGAWORDS => 'Acct-Output-Gigawords',
+        self::ATTR_ACCT_INTERIM_INTERVAL => 'Acct-Interim-Interval',
+
+        //rfc2869
+        self::ATTR_EVENT_TIMESTAMP => 'Event-Timestamp',
+        self::ATTR_ARAP_PASSWORD => 'ARAP-Password',
+        self::ATTR_ARAP_FEATURES => 'ARAP-Features',
+        self::ATTR_ARAP_ZONE_ACCESS => 'ARAP-Zone-Access',
+        self::ATTR_ARAP_SECURITY => 'ARAP-Security',
+        self::ATTR_ARAP_SECURITY_DATA => 'ARAP-Security-Data',
+        self::ATTR_PASSWORD_RETRY => 'Password-Retry',
+        self::ATTR_PROMPT => 'Prompt',
+        self::ATTR_CONNECT_INFO => 'Connect-Info',
+        self::ATTR_CONFIGURATION_TOKEN => 'Configuration-Token',
+        self::ATTR_EAP_MESSAGE => 'EAP-Message',
+        self::ATTR_MESSAGE_AUTHENTICATOR => 'Message-Authenticator',
+        self::ATTR_ARAP_CHALLENGE_RESPONSE => 'ARAP-Challenge-Response',
+        self::ATTR_NAS_PORT_ID => 'NAS-Port-Id',
+        self::ATTR_FRAMED_POOL => 'Framed-Pool',
     ];
 
     /**

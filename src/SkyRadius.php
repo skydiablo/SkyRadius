@@ -24,6 +24,7 @@ use SkyDiablo\SkyRadius\AttributeHandler\IntegerAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\StringAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\UserPasswordAttributeHandler;
+use SkyDiablo\SkyRadius\Exception\SkyRadiusException;
 use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 use SkyDiablo\SkyRadius\Packet\ResponsePacket;
@@ -36,31 +37,32 @@ class SkyRadius extends EventEmitter
 
     const EVENT_PACKET = 'packet';
     const EVENT_SERVER_READY = 'server-ready';
+    const EVENT_ERROR = 'error';
 
     /**
      * @var LoopInterface
      */
-    private $loop;
+    private LoopInterface $loop;
 
     /**
      * @var Socket
      */
-    private $socket;
+    private Socket $socket;
 
     /**
      * @var string
      */
-    private $psk;
+    private string $psk;
 
     /**
      * @var AttributeManager
      */
-    protected $attributeManager;
+    protected AttributeManager $attributeManager;
 
     /**
      * @var RawAttributeHandler
      */
-    protected $rawAttributeHandler;
+    protected RawAttributeHandler $rawAttributeHandler;
 
     /**
      * SkyRadius constructor.
@@ -75,7 +77,7 @@ class SkyRadius extends EventEmitter
         $this->psk = $psk;
         $this->attributeManager = $attributeManager ?: new AttributeManager();
         $this->rawAttributeHandler = new RawAttributeHandler();
-        $this->initRFC2865AttributeHandler();
+        $this->initRFCAttributeHandler();
 
         $this->socket = (new Factory($loop))->createServer($uri);
 
@@ -89,6 +91,8 @@ class SkyRadius extends EventEmitter
                     } catch (SilentDiscardException $e) {
                         // silently ignored...
                         // @todo: logging?!
+                    } catch (SkyRadiusException $e) {
+                        $this->emit(self::EVENT_ERROR, [$e]);
                     }
                 });
             })
@@ -100,7 +104,7 @@ class SkyRadius extends EventEmitter
             });
     }
 
-    protected function initRFC2865AttributeHandler()
+    protected function initRFCAttributeHandler()
     {
         $this->attributeManager
             ->setHandler(new VendorSpecificAttributeHandler(), AttributeInterface::ATTR_VENDOR_SPECIFIC);
@@ -114,6 +118,8 @@ class SkyRadius extends EventEmitter
                 );
             }
         };
+
+        // ======== RFC2865 =========
 
         $initHandlerFunction(new UserPasswordAttributeHandler($this->psk), [
             AttributeInterface::ATTR_USER_PASSWORD
@@ -157,6 +163,45 @@ class SkyRadius extends EventEmitter
 
         $initHandlerFunction(new TunnelPasswordAttributeHandler($this->psk), [
             AttributeInterface::ATTR_TUNNEL_PASSWORD,
+        ]);
+
+        // ======== RFC2866 =========
+
+        $initHandlerFunction(new IntegerAttributeHandler(), [
+            AttributeInterface::ATTR_ACCT_STATUS_TYPE,
+            AttributeInterface::ATTR_ACCT_DELAY_TIME,
+            AttributeInterface::ATTR_ACCT_INPUT_OCTETS,
+            AttributeInterface::ATTR_ACCT_OUTPUT_OCTETS,
+            AttributeInterface::ATTR_ACCT_AUTHENTIC,
+            AttributeInterface::ATTR_ACCT_SESSION_TIME,
+            AttributeInterface::ATTR_ACCT_INPUT_PACKETS,
+            AttributeInterface::ATTR_ACCT_OUTPUT_PACKETS,
+            AttributeInterface::ATTR_ACCT_TERMINATE_CAUSE,
+            AttributeInterface::ATTR_ACCT_LINK_COUNT,
+        ]);
+
+        $initHandlerFunction(new StringAttributeHandler(), [
+            AttributeInterface::ATTR_ACCT_SESSION_ID,
+            AttributeInterface::ATTR_ACCT_MULTI_SESSION_ID,
+        ]);
+
+
+        // ============= RFC2869 ============
+
+        $initHandlerFunction(new IntegerAttributeHandler(), [
+            AttributeInterface::ATTR_ACCT_INPUT_GIGAWORDS,
+            AttributeInterface::ATTR_ACCT_OUTPUT_GIGAWORDS,
+            AttributeInterface::ATTR_EVENT_TIMESTAMP,
+            AttributeInterface::ATTR_PASSWORD_RETRY,
+            AttributeInterface::ATTR_PROMPT,
+            AttributeInterface::ATTR_ACCT_INTERIM_INTERVAL,
+        ]);
+
+        $initHandlerFunction(new StringAttributeHandler(), [
+            AttributeInterface::ATTR_CONNECT_INFO,
+            AttributeInterface::ATTR_CONFIGURATION_TOKEN,
+            AttributeInterface::ATTR_NAS_PORT_ID,
+            AttributeInterface::ATTR_FRAMED_POOL,
         ]);
     }
 

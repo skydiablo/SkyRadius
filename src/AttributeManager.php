@@ -23,9 +23,7 @@ class AttributeManager
     /**
      * @var AttributeHandlerInterface[]
      */
-    private $handler;
-
-    private $typeAliasMap = [];
+    private array $handler;
 
     /**
      * @param AttributeHandlerInterface $handler
@@ -34,7 +32,7 @@ class AttributeManager
      * @param array $values
      * @return AttributeManager
      */
-    public function setHandler(AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = [])
+    public function setHandler(AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = []): AttributeManager
     {
         //@todo: this is an "easy way" to store handler and other stuff, maybe we should use an ValueObject?!
         $this->handler[$type] = [
@@ -49,15 +47,17 @@ class AttributeManager
      * @param int $type
      * @return AttributeHandlerInterface|null
      */
-    public function getHandler(int $type)
+    public function getHandler(int $type): ?AttributeHandlerInterface
     {
         return $this->handler[$type][self::HANDLER] ?? null;
     }
 
     /**
-     * @inheritDoc
+     * @param RawAttribute $rawAttribute
+     * @param RequestPacket $requestPacket
+     * @return AttributeInterface
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket): ?AttributeInterface
     {
         $handlerConf = $this->handler[$rawAttribute->getType()] ?? null;
         if ($handlerConf) {
@@ -83,7 +83,7 @@ class AttributeManager
      * @param RequestPacket $requestPacket
      * @return string
      */
-    protected function serializeValueByType(AttributeInterface $attribute, int $type, RequestPacket $requestPacket)
+    protected function serializeValueByType(AttributeInterface $attribute, int $type, RequestPacket $requestPacket): ?string
     {
         $handlerConf = $this->handler[$type] ?? null;
         if ($handlerConf) {
@@ -98,7 +98,7 @@ class AttributeManager
      * @param RequestPacket $requestPacket
      * @return string|null
      */
-    public function serializeAttribute(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeAttribute(AttributeInterface $attribute, RequestPacket $requestPacket): ?string
     {
         if ($attribute instanceof VendorSpecificAttribute) { //@todo: i hate to handle that in this way -.-
             $type = AttributeInterface::ATTR_VENDOR_SPECIFIC;

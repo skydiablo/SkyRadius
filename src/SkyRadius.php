@@ -45,11 +45,6 @@ class SkyRadius extends EventEmitter
     private LoopInterface $loop;
 
     /**
-     * @var Socket
-     */
-    private Socket $socket;
-
-    /**
      * @var string
      */
     private string $psk;
@@ -79,9 +74,7 @@ class SkyRadius extends EventEmitter
         $this->rawAttributeHandler = new RawAttributeHandler();
         $this->initRFCAttributeHandler();
 
-        $this->socket = (new Factory($loop))->createServer($uri);
-
-        $this->socket
+        (new Factory($loop))->createServer($uri)
             ->then(function (Socket $socket) {
                 $socket->on('message', function (string $raw, string $peer, Socket $server) {
                     try {
@@ -317,6 +310,8 @@ class SkyRadius extends EventEmitter
             $pos += $rawAttr->getAttributeLength();
             if ($attribute = $this->attributeManager->deserializeRawAttribute($rawAttr, $requestPacket)) {
                 $requestPacket->addAttribute($attribute);
+            } else {
+
             }
         }
         return $requestPacket;

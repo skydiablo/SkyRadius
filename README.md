@@ -1,8 +1,8 @@
 # SkyRadius
 
 The first (known to me) RADIUS server which was implemented natively in PHP! Based on the incredible
-possibilities of ReactPHP I was able to write this library. Currently RFC2865 + RFC2868 are implemented, if you want to contribute, you
-should follow up with RFC2866 + RFC2867 (I'm always happy about PRs ;) ).
+possibilities of ReactPHP I was able to write this library. Currently RFC2865, RFC2866, RFC2868 + RFC2869 are 
+implemented, if you want to contribute, you may follow up with RFC2867 (I'm always happy about PRs ;) ).
 
 ## Example
 

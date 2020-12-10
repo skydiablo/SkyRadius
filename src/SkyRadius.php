@@ -88,9 +88,7 @@ class SkyRadius extends EventEmitter
                         $this->emit(self::EVENT_ERROR, [$e]);
                     }
                 });
-            })
-            ->then(function (Socket $socket) {
-                $this->emit(self::EVENT_SERVER_READY, [$socket, $this]);
+                return $socket;
             })
             ->otherwise(function (\Throwable $e) {
                 $this->emit('error', [$e]);

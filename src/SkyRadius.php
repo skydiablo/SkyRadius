@@ -36,7 +36,6 @@ class SkyRadius extends EventEmitter
     use UnPackInteger;
 
     const EVENT_PACKET = 'packet';
-    const EVENT_SERVER_READY = 'server-ready';
     const EVENT_ERROR = 'error';
 
     /**

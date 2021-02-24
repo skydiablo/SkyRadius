@@ -75,6 +75,7 @@ class AttributeManager
                 return $attr;
             }
         }
+        return null;
     }
 
     /**

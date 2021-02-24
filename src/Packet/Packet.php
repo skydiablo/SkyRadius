@@ -11,12 +11,17 @@ class Packet implements PacketInterface
     /**
      * @var int
      */
-    protected $type;
+    protected int $type;
 
     /**
      * @var \SplObjectStorage|AttributeInterface[]
      */
     private $attributes;
+
+    /**
+     * @var \SplObjectStorage|AttributeInterface[]
+     */
+    private $unknownRawAttributes;
 
     /**
      * Packet constructor.
@@ -26,6 +31,7 @@ class Packet implements PacketInterface
     {
         $this->type = $type;
         $this->attributes = new \SplObjectStorage();
+        $this->unknownRawAttributes = new \SplObjectStorage();
     }
 
     /**
@@ -49,7 +55,7 @@ class Packet implements PacketInterface
      * @param AttributeInterface[] $attributes
      * @return $this
      */
-    public function addAttributes(array $attributes)
+    public function addAttributes(array $attributes): Packet
     {
         array_map([$this, 'addAttribute'], $attributes);
         return $this;
@@ -59,17 +65,35 @@ class Packet implements PacketInterface
      * @param AttributeInterface $attribute
      * @return Packet
      */
-    public function addAttribute(AttributeInterface $attribute)
+    public function addAttribute(AttributeInterface $attribute): Packet
     {
         $this->attributes->attach($attribute, $attribute->getType());
         return $this;
     }
 
     /**
+     * @param AttributeInterface $attribute
+     * @return Packet
+     */
+    public function addUnknownRawAttribute(AttributeInterface $attribute): Packet
+    {
+        $this->unknownRawAttributes->attach($attribute, $attribute->getType());
+        return $this;
+    }
+
+    /**
+     * @return AttributeInterface[]
+     */
+    public function getUnknownRawAttributes(): array
+    {
+        return iterator_to_array($this->unknownRawAttributes, false);
+    }
+
+    /**
      * @param int $type
      * @return AttributeInterface[]
      */
-    public function getAttributeByType(int ...$type)
+    public function getAttributeByType(int ...$type): array
     {
         return array_filter($this->getAttributes(), function (AttributeInterface $attribute) use ($type) {
             return in_array($this->attributes[$attribute], $type, true);
@@ -80,7 +104,7 @@ class Packet implements PacketInterface
      * @param string $alias
      * @return AttributeInterface[]
      */
-    public function getAttributeByAlias(string ...$alias)
+    public function getAttributeByAlias(string ...$alias): array
     {
         return array_filter($this->getAttributes(), function (AttributeInterface $attribute) use ($alias) {
             return in_array($attribute->getTypeAlias(), $alias, true);
@@ -91,7 +115,7 @@ class Packet implements PacketInterface
      * @param $identifier
      * @return AttributeInterface[]
      */
-    public function getAttribute(...$identifiers)
+    public function getAttribute(...$identifiers): array
     {
         $filterIntParams = function (array $params, bool $isInt = true) {
             return array_filter($params, function ($param) use ($isInt) {

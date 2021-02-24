@@ -308,7 +308,7 @@ class SkyRadius extends EventEmitter
             if ($attribute = $this->attributeManager->deserializeRawAttribute($rawAttr, $requestPacket)) {
                 $requestPacket->addAttribute($attribute);
             } else {
-
+                $requestPacket->addUnknownRawAttribute($rawAttr);
             }
         }
         return $requestPacket;

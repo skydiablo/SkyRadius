@@ -8,7 +8,7 @@ namespace SkyDiablo\SkyRadius\Exception;
  * Class SkyRadiusException
  * @package SkyDiablo\SkyRadius\Exception
  */
-abstract class SkyRadiusException extends \Exception
+class SkyRadiusException extends \Exception
 {
 
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
 
+use SkyDiablo\SkyRadius\Exception\InvalidRequestException;
 use SkyDiablo\SkyRadius\Exception\InvalidResponseException;
 use SkyDiablo\SkyRadius\Exception\SilentDiscardException;
 use SkyDiablo\SkyRadius\AttributeHandler\TunnelPasswordAttributeHandler;
@@ -37,6 +38,7 @@ class SkyRadius extends EventEmitter
 
     const EVENT_PACKET = 'packet';
     const EVENT_ERROR = 'error';
+    const EVENT_PACKET_DISCARDED = 'packed-discarded';
 
     /**
      * @var LoopInterface
@@ -82,7 +84,7 @@ class SkyRadius extends EventEmitter
                         $this->sendResponse($context, $peer, $server);
                     } catch (SilentDiscardException $e) {
                         // silently ignored...
-                        // @todo: logging?!
+                        $this->emit(self::EVENT_PACKET_DISCARDED, [$e]);
                     } catch (SkyRadiusException $e) {
                         $this->emit(self::EVENT_ERROR, [$e]);
                     }
@@ -90,7 +92,7 @@ class SkyRadius extends EventEmitter
                 return $socket;
             })
             ->otherwise(function (\Throwable $e) {
-                $this->emit('error', [$e]);
+                $this->emit(self::EVENT_ERROR, [new SkyRadiusException($e->getMessage(), $e->getCode(), $e)]);
             });
     }
 
@@ -272,6 +274,7 @@ class SkyRadius extends EventEmitter
      * @param string $data
      * @return RequestPacket
      * @throws SilentDiscardException
+     * @throws InvalidRequestException
      * @todo: you can change this value by "$this->socket->bufferSize". if this value is to small, this function have to
      * @todo: handle multiple input raw-input-data for the same request!
      * @todo: the input buffer is set to 65536 bytes (64MB) by default, this should be enough for now.
@@ -293,14 +296,14 @@ class SkyRadius extends EventEmitter
          * is 4096.
          */
         if ($len > $realDataLen) { // package is to short
-            throw SilentDiscardException::create();
+            throw SilentDiscardException::create(sprintf('Request-Message is to short. HeaderLength: %d / RealLength: %d', $len, $realDataLen));
+        } elseif ($realDataLen > 4096) {
+            throw SilentDiscardException::create(sprintf('Request-Message is to long. Allowed length: %d / RealLength: %d', 4096, $realDataLen));
         }
 
         $requestPacket = new RequestPacket($type, $id, $authenticator, $data);
 
-        if (!$this->validateRequest($requestPacket)) {
-            throw SilentDiscardException::create();
-        }
+        $this->validateRequest($requestPacket);
 
         while ($pos < $len) {
             $rawAttr = $this->rawAttributeHandler->parseRawAttribute($data, $pos);
@@ -317,6 +320,7 @@ class SkyRadius extends EventEmitter
     /**
      * @param RequestPacket $requestPacket
      * @return bool
+     * @throws InvalidRequestException
      */
     protected function validateRequest(RequestPacket $requestPacket): bool
     {
@@ -330,7 +334,9 @@ class SkyRadius extends EventEmitter
                 */
                 $haystack = substr_replace($requestPacket->getRaw(), str_repeat(chr(0x00), 16), 4, 16);
                 $md5 = md5($haystack . $this->psk, true);
-                return $md5 === $requestPacket->getAuthenticator();
+                if (!($md5 === $requestPacket->getAuthenticator())) {
+                    throw new InvalidRequestException(sprintf('Authenticator mismatch! Request: %s, Calculated: %s', bin2hex($requestPacket->getAuthenticator()), bin2hex($md5)), PacketInterface::ACCOUNTING_REQUEST);
+                }
             default:
                 return true;
         }

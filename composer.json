@@ -14,7 +14,9 @@
     }
   ],
   "require": {
-    "react/datagram": "^1.5.0"
+    "react/datagram": "^1.5.0",
+    "react/cache": "^1.1",
+    "skydiablo/sky-ttl-list": "@dev"
   },
   "autoload": {
     "psr-4": {

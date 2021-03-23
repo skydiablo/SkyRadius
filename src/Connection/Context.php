@@ -32,7 +32,7 @@ class Context
     {
         $this->request = $request;
         //by default, all requests are rejected!
-        $this->response = new ResponsePacket(ResponsePacket::ACCESS_REJECT);
+        $this->response = new ResponsePacket(ResponsePacket::ACCESS_REJECT, $request->getIdentifier(), '', '');
     }
 
     /**

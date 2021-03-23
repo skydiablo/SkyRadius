@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SkyDiablo\SkyRadius\Packet;
 
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
+use SkyDiablo\SkyRadius\SkyRadius;
 
 class Packet implements PacketInterface
 {
@@ -12,6 +13,21 @@ class Packet implements PacketInterface
      * @var int
      */
     protected int $type;
+
+    /**
+     * @var int
+     */
+    private int $identifier;
+
+    /**
+     * @var string
+     */
+    private string $authenticator;
+
+    /**
+     * @var string
+     */
+    private string $raw;
 
     /**
      * @var \SplObjectStorage|AttributeInterface[]
@@ -26,12 +42,43 @@ class Packet implements PacketInterface
     /**
      * Packet constructor.
      * @param int $type
+     * @param int $identifier
+     * @param string $authenticator
+     * @param string $raw
      */
-    public function __construct(int $type)
+    public function __construct(int $type, int $identifier, string $authenticator, string $raw)
     {
         $this->type = $type;
+        $this->identifier = $identifier;
+        $this->authenticator = str_pad(substr($authenticator, 0, SkyRadius::AUTHENTICATOR_LENGTH), SkyRadius::AUTHENTICATOR_LENGTH, chr(0x00), STR_PAD_RIGHT);
+        $this->raw = $raw;
         $this->attributes = new \SplObjectStorage();
         $this->unknownRawAttributes = new \SplObjectStorage();
+    }
+
+    /**
+     * @param string $raw
+     */
+    public function setRaw(string $raw): Packet
+    {
+        $this->raw = $raw;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthenticator(): string
+    {
+        return $this->authenticator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRaw(): string
+    {
+        return $this->raw;
     }
 
     /**
@@ -101,6 +148,16 @@ class Packet implements PacketInterface
     }
 
     /**
+     * @param AttributeInterface $attribute
+     * @return Packet
+     */
+    public function removeAttribute(AttributeInterface $attribute): Packet
+    {
+        $this->attributes->detach($attribute);
+        return $this;
+    }
+
+    /**
      * @param string $alias
      * @return AttributeInterface[]
      */
@@ -127,6 +184,14 @@ class Packet implements PacketInterface
             $this->getAttributeByType(...$filterIntParams($identifiers)),
             $this->getAttributeByAlias(...$filterIntParams($identifiers, false))
         );
+    }
+
+    /**
+     * @return int
+     */
+    public function getIdentifier(): int
+    {
+        return $this->identifier;
     }
 
 }

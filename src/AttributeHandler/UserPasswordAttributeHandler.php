@@ -7,8 +7,6 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
-use SkyDiablo\SkyRadius\Attribute\UserPasswordAttribute;
-use SkyDiablo\SkyRadius\Packet\Packet;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
 /**
@@ -29,32 +27,12 @@ class UserPasswordAttributeHandler implements AttributeHandlerInterface
         $this->psk = $psk;
     }
 
-
     /**
      * @inheritDoc
      */
     public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
     {
-        return new StringAttribute($rawAttribute->getType(), $this->decryptUserPasswordPAP($rawAttribute->getValue(), $requestPacket));
-    }
-
-    /**
-     * @param string $encryptedPassword
-     * @param RequestPacket $packet
-     * @return string
-     * @see https://tools.ietf.org/html/rfc2865#section-5.2
-     */
-    protected function decryptUserPasswordPAP(string $encryptedPassword, RequestPacket $packet)
-    {
-        $result = '';
-        $salt = $packet->getAuthenticator();
-        foreach (str_split($encryptedPassword, 16) as $chunk) {
-            $v = md5($this->psk . $salt, true);
-            $result .= $chunk ^ $v; // XOR
-            $salt = $chunk;
-        }
-
-        return rtrim($result, "\0");
+        return new StringAttribute($rawAttribute->getType(), $this->encodeUserPasswordPAP($requestPacket, $rawAttribute->getValue()));
     }
 
     /**
@@ -62,7 +40,26 @@ class UserPasswordAttributeHandler implements AttributeHandlerInterface
      */
     public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
     {
-//        throw new \RuntimeException('Not implemented, yet!');
-        return 'Server-Side "User-Password" encoding not supported!';
+        return $this->encodeUserPasswordPAP($requestPacket, $attribute->getValue());
     }
+
+    /**
+     * @param RequestPacket $requestPacket
+     * @param string $value
+     * @return string
+     * @see https://tools.ietf.org/html/rfc2865#section-5.2
+     */
+    protected function encodeUserPasswordPAP(RequestPacket $requestPacket, string $value)
+    {
+        $result = '';
+        $salt = $requestPacket->getAuthenticator();
+        foreach (str_split($value, 16) as $chunk) {
+            $v = md5($this->psk . $salt, true);
+            $result .= $chunk ^ $v; // XOR
+            $salt = $chunk;
+        }
+        return rtrim($result, "\0");
+    }
+
+
 }

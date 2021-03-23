@@ -13,11 +13,12 @@ use SkyDiablo\SkyRadius\Connection\Context;
 use SkyDiablo\SkyRadius\Exception\SkyRadiusException;
 use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\SkyRadius;
+use SkyDiablo\SkyRadius\SkyRadiusServer;
 
 require __DIR__ . '/vendor/autoload.php';
 
 $loop = \React\EventLoop\Factory::create();
-$radius = new SkyRadius($loop, '0.0.0.0:3500', 'test');
+$radius = new SkyRadiusServer($loop, '0.0.0.0:3500', 'test');
 
 // load freeRADIUS dictionary files
 $loader = new FreeRadiusDictionaryLoader($radius);

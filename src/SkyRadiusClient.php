@@ -58,7 +58,7 @@ class SkyRadiusClient extends SkyRadius
      * @param string $client
      * @throws Exception\SilentDiscardException
      */
-    protected function onMessage(string $message, string $serverAddress, string $client)
+    protected function onMessage(string $message, string $serverAddress, \React\Datagram\Socket $client)
     {
         /** @var ResponsePacket $responsePacket */
         $responsePacket = $this->handleRawInput($message, self::RAW_INPUT_TYPE_RESPONSE);

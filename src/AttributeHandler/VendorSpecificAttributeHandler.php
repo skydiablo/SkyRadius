@@ -8,7 +8,7 @@ use SkyDiablo\SkyRadius\Attribute\VendorSpecificAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\AttributeManager;
-use SkyDiablo\SkyRadius\AttributeHandler\AttributeHandlerInterface;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
 /**
@@ -21,12 +21,12 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
     /**
      * @var RawAttributeHandler
      */
-    private $rawAttributeHandler;
+    private RawAttributeHandler $rawAttributeHandler;
 
     /**
      * @var AttributeManager[]
      */
-    private $attributeManagerList = [];
+    private array $attributeManagerList = [];
 
     /**
      * VendorSpecificAttributeHandler constructor.
@@ -44,7 +44,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      * @param array $valueAlias
      * @return VendorSpecificAttributeHandler
      */
-    public function setHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $valueAlias = [])
+    public function setHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $valueAlias = []): VendorSpecificAttributeHandler
     {
         $ah = $this->attributeManagerList[$vendorId] ?? $this->attributeManagerList[$vendorId] = new AttributeManager();
         $ah->setHandler($handler, $type, $alias, $valueAlias);
@@ -56,7 +56,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      * @inheritDoc
      * @see https://tools.ietf.org/html/rfc2865#section-5.26
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         $vendorId = $this->unpackInt32($rawAttribute->getValue()); //first 4 bytes are represent the vendor-id
         $vsaRawAttribute = $this->rawAttributeHandler->parseRawAttribute($rawAttribute->getValue(), 4); //skip first 4 bytes
@@ -73,7 +73,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      * @return null|string
      * @var AttributeInterface|VendorSpecificAttribute $attribute
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         $attributeHandler = $this->attributeManagerList[$attribute->getVendorId()] ?? null;
         if ($attributeHandler) {

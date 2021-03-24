@@ -7,7 +7,7 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
-use SkyDiablo\SkyRadius\Packet\RequestPacket;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 
 /**
  * Class UserPasswordAttributeHandler
@@ -30,7 +30,7 @@ class UserPasswordAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         return new StringAttribute($rawAttribute->getType(), $this->encodeUserPasswordPAP($requestPacket, $rawAttribute->getValue()));
     }
@@ -38,18 +38,18 @@ class UserPasswordAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         return $this->encodeUserPasswordPAP($requestPacket, $attribute->getValue());
     }
 
     /**
-     * @param RequestPacket $requestPacket
+     * @param PacketInterface $requestPacket
      * @param string $value
      * @return string
      * @see https://tools.ietf.org/html/rfc2865#section-5.2
      */
-    protected function encodeUserPasswordPAP(RequestPacket $requestPacket, string $value)
+    protected function encodeUserPasswordPAP(PacketInterface $requestPacket, string $value): string
     {
         $result = '';
         $salt = $requestPacket->getAuthenticator();

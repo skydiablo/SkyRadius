@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius\AttributeHandler;
 
-use SkyDiablo\SkyRadius\AttributeHandler\AbstractAttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\IPv4Attribute;
-use SkyDiablo\SkyRadius\Packet\RequestPacket;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 
 /**
  * Class IPv4AttributeHandler
@@ -20,7 +19,7 @@ class IPv4AttributeHandler extends AbstractAttributeHandler
     /**
      * @inheritDoc
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         return new IPv4Attribute($rawAttribute->getType(), $ip = long2ip($this->unpackInt32($rawAttribute->getValue())));
     }
@@ -28,7 +27,7 @@ class IPv4AttributeHandler extends AbstractAttributeHandler
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         return $this->packInt32(ip2long($attribute->getValue()));
     }

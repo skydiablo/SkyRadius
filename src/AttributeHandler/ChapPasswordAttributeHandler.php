@@ -7,7 +7,7 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\ChapPasswordAttribute;
-use SkyDiablo\SkyRadius\Packet\RequestPacket;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 
 /**
  * Class ChapPasswordAttributeHandler
@@ -19,16 +19,16 @@ class ChapPasswordAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         $rawValue = $rawAttribute->getValue();
-        return new ChapPasswordAttribute($rawAttribute->getType(), $rawValue{0}, substr($rawValue, 1, 16));
+        return new ChapPasswordAttribute($rawAttribute->getType(), $rawValue[0], substr($rawValue, 1, 16));
     }
 
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         /** @var ChapPasswordAttribute $attribute */
         return $attribute->getChapResponse() . $attribute->getChapResponse();

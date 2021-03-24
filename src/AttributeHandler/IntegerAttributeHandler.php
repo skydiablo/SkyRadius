@@ -7,7 +7,7 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\IntegerAttribute;
-use SkyDiablo\SkyRadius\Packet\RequestPacket;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Helper\UnPackInteger;
 
 /**
@@ -22,7 +22,7 @@ class IntegerAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         // because "*8" => byte -> bit
         $bit = ($rawAttribute->getValueLength()) * 8;
@@ -32,7 +32,7 @@ class IntegerAttributeHandler implements AttributeHandlerInterface
     /**
      * @inheritDoc
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         /** @var IntegerAttribute $attribute */
         return $this->packInt($attribute->getBit(), $attribute->getValue());

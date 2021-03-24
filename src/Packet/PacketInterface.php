@@ -42,4 +42,15 @@ interface PacketInterface
      */
     public function getAttributeByAlias(string ...$alias);
 
+    /**
+     * @return string
+     */
+    public function getAuthenticator(): string;
+
+    /**
+     * @return int
+     */
+    public function getIdentifier(): int;
+
+
 }

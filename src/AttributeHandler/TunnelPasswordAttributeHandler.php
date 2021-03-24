@@ -8,8 +8,7 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
-use SkyDiablo\SkyRadius\Attribute\TunnelAttribute;
-use SkyDiablo\SkyRadius\Packet\RequestPacket;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 
 class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
 {
@@ -28,18 +27,18 @@ class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
     /**
      * @inheritDoc
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         return null; // TunnelPassword is only allowed on Accept-Response Packet, so deserialize is not permitted
     }
 
     /**
-     * @param AttributeInterface|TunnelAttribute $attribute
-     * @param RequestPacket $requestPacket
+     * @param AttributeInterface $attribute
+     * @param PacketInterface $requestPacket
      * @return string
      * @throws \Exception
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         $salt = \random_bytes(2);
         // The most significant bit (leftmost) of the Salt field MUST be set (1)

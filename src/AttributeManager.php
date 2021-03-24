@@ -9,6 +9,8 @@ use SkyDiablo\SkyRadius\Attribute\RawAttribute;
 use SkyDiablo\SkyRadius\Attribute\VendorSpecificAttribute;
 use SkyDiablo\SkyRadius\AttributeHandler\AttributeHandlerInterface;
 use SkyDiablo\SkyRadius\Helper\UnPackInteger;
+use SkyDiablo\SkyRadius\Packet\Packet;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
 class AttributeManager
@@ -54,10 +56,10 @@ class AttributeManager
 
     /**
      * @param RawAttribute $rawAttribute
-     * @param RequestPacket $requestPacket
+     * @param PacketInterface $requestPacket
      * @return AttributeInterface
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket): ?AttributeInterface
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         $handlerConf = $this->handler[$rawAttribute->getType()] ?? null;
         if ($handlerConf) {

@@ -7,7 +7,7 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
-use SkyDiablo\SkyRadius\Packet\RequestPacket;
+use SkyDiablo\SkyRadius\Packet\PacketInterface;
 
 /**
  * Class StringAttributeHandler
@@ -21,20 +21,20 @@ class StringAttributeHandler implements AttributeHandlerInterface
 
     /**
      * @param RawAttribute $rawAttribute
-     * @param RequestPacket $requestPacket
+     * @param PacketInterface $requestPacket
      * @return StringAttribute
      */
-    public function deserializeRawAttribute(RawAttribute $rawAttribute, RequestPacket $requestPacket)
+    public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
         return new StringAttribute($rawAttribute->getType(), $rawAttribute->getValue());
     }
 
     /**
      * @param AttributeInterface $attribute
-     * @param RequestPacket $requestPacket
+     * @param PacketInterface $requestPacket
      * @return string
      */
-    public function serializeValue(AttributeInterface $attribute, RequestPacket $requestPacket)
+    public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         return $this->packValue($attribute->getValue());
     }

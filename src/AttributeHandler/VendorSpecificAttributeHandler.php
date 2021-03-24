@@ -66,6 +66,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
                 return new VendorSpecificAttribute($vendorId, $attr);
             }
         }
+        return null;
     }
 
     /**
@@ -82,5 +83,6 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
             $out .= $attributeHandler->serializeAttribute($attribute->getInnerVSA(), $requestPacket);
             return $out;
         }
+        return null;
     }
 }

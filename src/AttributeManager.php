@@ -94,6 +94,7 @@ class AttributeManager
             $handler = $handlerConf[self::HANDLER];
             return $handler->serializeValue($attribute, $requestPacket);
         }
+        return null;
     }
 
     /**
@@ -114,5 +115,6 @@ class AttributeManager
                 $this->packInt8(strlen($attrRawValue) + 2) . // +2 => type + length
                 $attrRawValue;
         }
+        return null;
     }
 }

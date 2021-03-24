@@ -11,10 +11,12 @@ class ResponsePacket extends Packet
 
     /**
      * @param int $type
+     * @return ResponsePacket
      */
-    public function setType(int $type): void
+    public function setType(int $type): ResponsePacket
     {
         $this->type = $type;
+        return $this;
     }
 
 }

@@ -129,6 +129,27 @@ class Packet implements PacketInterface
     }
 
     /**
+     * @param int ...$type
+     * @return AttributeInterface[]
+     */
+    public function getUnknownRawAttributeByType(int ...$type): array
+    {
+        return array_filter($this->getUnknownRawAttributes(), function (AttributeInterface $attribute) use ($type) {
+            return in_array($this->unknownRawAttributes[$attribute], $type, true);
+        });
+    }
+
+    /**
+     * @param AttributeInterface $attribute
+     * @return Packet
+     */
+    public function removeUnknownRawAttribute(AttributeInterface $attribute): Packet
+    {
+        $this->unknownRawAttributes->detach($attribute);
+        return $this;
+    }
+
+    /**
      * @return AttributeInterface[]
      */
     public function getUnknownRawAttributes(): array
@@ -137,7 +158,7 @@ class Packet implements PacketInterface
     }
 
     /**
-     * @param int $type
+     * @param int ...$type
      * @return AttributeInterface[]
      */
     public function getAttributeByType(int ...$type): array
@@ -158,7 +179,7 @@ class Packet implements PacketInterface
     }
 
     /**
-     * @param string $alias
+     * @param string ...$alias
      * @return AttributeInterface[]
      */
     public function getAttributeByAlias(string ...$alias): array
@@ -169,7 +190,7 @@ class Packet implements PacketInterface
     }
 
     /**
-     * @param $identifier
+     * @param mixed ...$identifiers
      * @return AttributeInterface[]
      */
     public function getAttribute(...$identifiers): array

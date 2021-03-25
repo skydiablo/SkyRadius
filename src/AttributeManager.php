@@ -83,10 +83,10 @@ class AttributeManager
     /**
      * @param AttributeInterface $attribute
      * @param int $type
-     * @param RequestPacket $requestPacket
+     * @param PacketInterface $requestPacket
      * @return string
      */
-    protected function serializeValueByType(AttributeInterface $attribute, int $type, RequestPacket $requestPacket): ?string
+    protected function serializeValueByType(AttributeInterface $attribute, int $type, PacketInterface $requestPacket): ?string
     {
         $handlerConf = $this->handler[$type] ?? null;
         if ($handlerConf) {
@@ -99,10 +99,10 @@ class AttributeManager
 
     /**
      * @param AttributeInterface $attribute
-     * @param RequestPacket $requestPacket
+     * @param PacketInterface $requestPacket
      * @return string|null
      */
-    public function serializeAttribute(AttributeInterface $attribute, RequestPacket $requestPacket): ?string
+    public function serializeAttribute(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         if ($attribute instanceof VendorSpecificAttribute) { //@todo: i hate to handle that in this way -.-
             $type = AttributeInterface::ATTR_VENDOR_SPECIFIC;

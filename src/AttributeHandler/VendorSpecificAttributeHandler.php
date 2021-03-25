@@ -66,22 +66,25 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
                 return new VendorSpecificAttribute($vendorId, $attr);
             }
         }
-        return null;
+        return new VendorSpecificAttribute($vendorId, $vsaRawAttribute);
     }
 
     /**
-     * @param RequestPacket $requestPacket
+     * @param AttributeInterface $attribute
+     * @param PacketInterface|VendorSpecificAttribute $requestPacket
      * @return null|string
-     * @var AttributeInterface|VendorSpecificAttribute $attribute
      */
     public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
-        $attributeHandler = $this->attributeManagerList[$attribute->getVendorId()] ?? null;
-        if ($attributeHandler) {
-            /** @var VendorSpecificAttribute $attribute */
-            $out = $this->packInt32($attribute->getVendorId());
-            $out .= $attributeHandler->serializeAttribute($attribute->getInnerVSA(), $requestPacket);
-            return $out;
+        if ($attribute instanceof VendorSpecificAttribute) {
+            $attributeHandler = $this->attributeManagerList[$attribute->getVendorId()] ?? null;
+            if ($attributeHandler) {
+                $out = $this->packInt32($attribute->getVendorId());
+                $out .= $attributeHandler->serializeAttribute($attribute->getInnerVSA(), $requestPacket);
+                return $out;
+            } elseif (($raw = $attribute->getInnerVSA()) instanceof RawAttribute) {
+                return $this->rawAttributeHandler->serializeRawAttribute($raw);
+            }
         }
         return null;
     }

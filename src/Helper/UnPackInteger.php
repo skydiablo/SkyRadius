@@ -13,7 +13,7 @@ trait UnPackInteger
      * @param int $startPos
      * @return int
      */
-    private function unpackInt(int $bit, string $data, $startPos = 0)
+    private function unpackInt(int $bit, string $data, $startPos = 0): int
     {
         $format = IntegerAttribute::FORMATTER[$bit];
         return unpack($format, substr($data, $startPos, $bit / 8))[1];
@@ -24,7 +24,7 @@ trait UnPackInteger
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt8($data, $startPos = 0)
+    protected function unpackInt8($data, $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_8, $data, $startPos);
     }
@@ -34,7 +34,7 @@ trait UnPackInteger
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt16($data, $startPos = 0)
+    protected function unpackInt16($data, $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_16, $data, $startPos);
     }
@@ -44,7 +44,7 @@ trait UnPackInteger
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt32($data, $startPos = 0)
+    protected function unpackInt32($data, $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_32, $data, $startPos);
     }
@@ -54,7 +54,7 @@ trait UnPackInteger
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt64($data, $startPos = 0)
+    protected function unpackInt64($data, $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_64, $data, $startPos);
     }
@@ -64,7 +64,7 @@ trait UnPackInteger
      * @param int $integer
      * @return string
      */
-    private function packInt(int $bit, int $integer)
+    private function packInt(int $bit, int $integer): string
     {
         $format = IntegerAttribute::FORMATTER[$bit];
         return pack($format, $integer);
@@ -74,7 +74,7 @@ trait UnPackInteger
      * @param $integer
      * @return string
      */
-    protected function packInt8(int $integer)
+    protected function packInt8(int $integer): string
     {
         return $this->packInt(IntegerAttribute::BIT_8, $integer);
     }
@@ -83,7 +83,7 @@ trait UnPackInteger
      * @param int $integer
      * @return string
      */
-    protected function packInt16(int $integer)
+    protected function packInt16(int $integer): string
     {
         return $this->packInt(IntegerAttribute::BIT_16, $integer);
     }
@@ -92,7 +92,7 @@ trait UnPackInteger
      * @param $integer
      * @return string
      */
-    protected function packInt32(int $integer)
+    protected function packInt32(int $integer): string
     {
         return $this->packInt(IntegerAttribute::BIT_32, $integer);
     }
@@ -101,7 +101,7 @@ trait UnPackInteger
      * @param $integer
      * @return string
      */
-    protected function packInt64(int $integer)
+    protected function packInt64(int $integer): string
     {
         return $this->packInt(IntegerAttribute::BIT_64, $integer);
     }

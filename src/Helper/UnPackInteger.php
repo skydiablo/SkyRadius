@@ -67,7 +67,17 @@ trait UnPackInteger
     private function packInt(int $bit, int $integer): string
     {
         $format = IntegerAttribute::FORMATTER[$bit];
-        return pack($format, $integer);
+        return $this->packIntByFormat($format, [$integer]);
+    }
+
+    /**
+     * @param string $format
+     * @param array<int> $integer
+     * @return string
+     */
+    public function packIntByFormat(string $format, array $integer): string
+    {
+        return pack($format, ...$integer);
     }
 
     /**

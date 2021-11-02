@@ -27,6 +27,6 @@ class Tunnel3ByteValueAttributeHandler extends AbstractAttributeHandler
     public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         /** @var TunnelAttribute $attribute */
-        return $this->packInt8($attribute->getTag()) . ($this->packInt32($attribute->getValue()) << 8);
+        return $this->packInt8($attribute->getTag()) . $this->packIntByFormat('ccc',[$attribute->getValue() >> 16, $attribute->getValue() >> 8, $attribute->getValue()]);
     }
 }

@@ -31,7 +31,7 @@ class ChapPasswordAttributeHandler implements AttributeHandlerInterface
     public function serializeValue(AttributeInterface $attribute, PacketInterface $requestPacket): ?string
     {
         /** @var ChapPasswordAttribute $attribute */
-        return $attribute->getChapResponse() . $attribute->getChapResponse();
+        return $attribute->getChapIdent() . $attribute->getChapResponse();
     }
 
 }

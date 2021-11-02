@@ -8,8 +8,15 @@ namespace SkyDiablo\SkyRadius\AttributeHandler;
 
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\RawAttribute;
+use SkyDiablo\SkyRadius\Attribute\TunnelAttribute;
 use SkyDiablo\SkyRadius\Packet\PacketInterface;
 
+/**
+ * Class TunnelPasswordAttributeHandler
+ * @package SkyDiablo\SkyRadius\AttributeHandler
+ * @author Volker von Hoeßlin [volker.hoesslin@swsn.de]
+ * @see https://datatracker.ietf.org/doc/html/rfc2868#section-3.5
+ */
 class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
 {
 
@@ -29,7 +36,8 @@ class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
      */
     public function deserializeRawAttribute(RawAttribute $rawAttribute, PacketInterface $requestPacket): ?AttributeInterface
     {
-        return null; // TunnelPassword is only allowed on Accept-Response Packet, so deserialize is not permitted
+        //TODO: for client-side, this have to decrypt also
+        return null;
     }
 
     /**
@@ -44,6 +52,7 @@ class TunnelPasswordAttributeHandler extends AbstractAttributeHandler
         // The most significant bit (leftmost) of the Salt field MUST be set (1)
         $salt[0] = chr(ord($salt[0]) | (1 << 7)); //@todo: any ideas to simplification this?
 
+        /** @var TunnelAttribute $attribute */
         $out = $this->packInt8($attribute->getTag()) . $salt;
 
         $b = md5($this->psk . $requestPacket->getAuthenticator() . $salt, true);

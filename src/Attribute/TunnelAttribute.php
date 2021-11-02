@@ -14,7 +14,7 @@ class TunnelAttribute extends AbstractAttribute
      * Valid values are 1 - 31 (0x01 - 0x1F), otherwise this value should ignored
      * @var int
      */
-    private $tag;
+    private int $tag;
 
     public function __construct(int $type, int $tag, $value)
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
 
+use React\EventLoop\Loop;
 use SkyDiablo\SkyRadius\AttributeHandler\TunnelPasswordAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\RawAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\Tunnel3ByteValueAttributeHandler;
@@ -59,14 +60,14 @@ abstract class SkyRadius extends EventEmitter
 
     /**
      * SkyRadius constructor.
-     * @param LoopInterface $loop
      * @param string $uri udp://0.0.0.0:3400 listen at all interfaces on port 3400
      * @param string $psk
      * @param AttributeManager|null $attributeManager
+     * @param LoopInterface|null $loop
      */
-    public function __construct(LoopInterface $loop, string $uri, string $psk, AttributeManager $attributeManager = null)
+    public function __construct(string $uri, string $psk, AttributeManager $attributeManager = null, LoopInterface $loop = null)
     {
-        $this->loop = $loop;
+        $this->loop = $loop ?? Loop::get();
         $this->psk = $psk;
         $this->attributeManager = $attributeManager ?: new AttributeManager();
         $this->rawAttributeHandler = new RawAttributeHandler();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use React\EventLoop\Loop;
 use SkyDiablo\SkyRadius\Dictionary\FreeRadiusDictionaryLoader;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
 use SkyDiablo\SkyRadius\Attribute\StringAttribute;
@@ -17,8 +18,7 @@ use SkyDiablo\SkyRadius\SkyRadiusServer;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$loop = \React\EventLoop\Factory::create();
-$radius = new SkyRadiusServer($loop, '0.0.0.0:3500', 'test');
+$radius = new SkyRadiusServer('0.0.0.0:3500', 'test');
 
 // load freeRADIUS dictionary files
 $loader = new FreeRadiusDictionaryLoader($radius);
@@ -58,7 +58,7 @@ $radius->on(SkyRadius::EVENT_PACKET, function (Context $context) use (&$packetCo
 });
 
 
-$loop->addPeriodicTimer(1, function () use (&$lastCount, &$packetCounter) {
+Loop::get()->addPeriodicTimer(1, function () use (&$lastCount, &$packetCounter) {
     $intervalCount = $packetCounter - $lastCount;
     $lastCount = $packetCounter;
     $message = sprintf("PacketCount: %d / IntervalCount: %d\n", $packetCounter, $intervalCount);
@@ -66,5 +66,3 @@ $loop->addPeriodicTimer(1, function () use (&$lastCount, &$packetCounter) {
     // @reactPHP community, please dont catch me, but a STDOUT stream handler seems not working in windows environments?
     echo $message;
 });
-
-$loop->run();

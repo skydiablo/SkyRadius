@@ -18,9 +18,9 @@ use SkyDiablo\SkyRadius\Packet\ResponsePacket;
 
 class SkyRadiusServer extends SkyRadius
 {
-    public function __construct(LoopInterface $loop, string $uri, string $psk, AttributeManager $attributeManager = null)
+    public function __construct(string $uri, string $psk, AttributeManager $attributeManager = null, LoopInterface $loop = null)
     {
-        parent::__construct($loop, $uri, $psk, $attributeManager);
+        parent::__construct($uri, $psk, $attributeManager, $loop);
         (new Factory($loop))->createServer($uri)
             ->then(function (Socket $socket) {
                 $socket->on('message', function (string $raw, string $peer, Socket $server) {

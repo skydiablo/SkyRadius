@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace SkyDiablo\SkyRadius;
 
 use React\Datagram\SocketInterface;
+use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use SkyDiablo\SkyRadius\Exception\InvalidResponseException;
@@ -31,15 +32,15 @@ class SkyRadiusClient extends SkyRadius
 
     /**
      * SkyRadiusClient constructor.
-     * @param LoopInterface $loop
      * @param string $uri
      * @param string $psk
      * @param float $responseTimeout
      * @param AttributeManager|null $attributeManager
+     * @param LoopInterface|null $loop
      */
-    public function __construct(LoopInterface $loop, string $uri, string $psk, float $responseTimeout = 10.0, AttributeManager $attributeManager = null)
+    public function __construct(string $uri, string $psk, float $responseTimeout = 10.0, AttributeManager $attributeManager = null, LoopInterface $loop = null)
     {
-        parent::__construct($loop, $uri, $psk, $attributeManager);
+        parent::__construct($uri, $psk, $attributeManager, $loop);
         $this->requestStack = new SkyTtlList($loop, $responseTimeout);
         $factory = new \React\Datagram\Factory($loop);
 

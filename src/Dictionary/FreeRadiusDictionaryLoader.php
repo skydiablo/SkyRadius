@@ -87,7 +87,7 @@ class FreeRadiusDictionaryLoader
                         break;
                     case 'ATTRIBUTE': // ATTRIBUTE name oid type [flags]
                         if (preg_match(self::REGEX_ATTRIBUTE, $matches[self::MATCH_LOAD], $subMatches)) {
-                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] = [];
+                                $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] = [];
                             $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] += [
                                 self::MATCH_OID => (int)$subMatches[self::MATCH_OID],
                                 self::MATCH_TYPE => $subMatches[self::MATCH_TYPE],
@@ -96,7 +96,7 @@ class FreeRadiusDictionaryLoader
                         break;
                     case 'VALUE': // VALUE attribute-name value-name number
                         if (preg_match(self::REGEX_VALUE, $matches[self::MATCH_LOAD], $subMatches)) {
-                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] = [];
+                                $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] = [];
                             $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] += [
                                 (int)$subMatches[self::MATCH_VALUE_NUMBER] => $subMatches[self::MATCH_VALUE_NAME]
                             ];
@@ -137,23 +137,23 @@ class FreeRadiusDictionaryLoader
      * @param string $type
      * @return mixed|IntegerAttributeHandler|IPv4AttributeHandler|StringAttributeHandler
      * @throws \Exception
+     * @see https://www.rfc-editor.org/rfc/rfc8044.html
+     * @todo incomplete type handling, checkout linked RFC
      */
     public function getAttributeHandlerByType(string $type)
     {
         switch ($type = strtoupper($type)) {
             case 'STRING': // string       UTF-8 printable text (the RFCs call this "text")
             case 'OCTETS': // octets       opaque binary data (the RFCs call this "string")
+            case 'TLV': // TODO: not sure, it should also allow nesting? checkout: https://www.rfc-editor.org/rfc/rfc6929#section-2.3
                 return $this->attributeHandlerCache[$type] ?? $this->attributeHandlerCache[$type] = new StringAttributeHandler();
-                break;
             case 'IPADDR': // ipaddr       IPv4 address
                 return $this->attributeHandlerCache[$type] ?? $this->attributeHandlerCache[$type] = new IPv4AttributeHandler();
-                break;
             case 'BYTE': // byte         8-bit unsigned integer
             case 'SHORT': // short        16-bit unsigned integer
             case 'INTEGER': // integer      32-bit unsigned integer
             case 'INTEGER64': // integer64    64-bit unsigned integer
                 return $this->attributeHandlerCache[$type] ?? $this->attributeHandlerCache[$type] = new IntegerAttributeHandler();
-                break;
             default:
                 // date         Seconds since January 1, 1970 (32-bits)
                 // ipv6addr     IPv6 Address

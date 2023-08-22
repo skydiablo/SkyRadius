@@ -3,8 +3,8 @@
 
 namespace SkyDiablo\SkyRadius\Helper;
 
-use InvalidArgumentException;
 use SkyDiablo\SkyRadius\Attribute\IntegerAttribute;
+use SkyDiablo\SkyRadius\Exception\InvalidArgumentException;
 
 trait UnPackInteger
 {

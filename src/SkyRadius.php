@@ -219,7 +219,7 @@ abstract class SkyRadius extends EventEmitter
      */
     protected function handleRawInput(string $data, string $rawInputType): Packet
     {
-        $data = trim($data, "\n");
+        $data = rtrim($data, "\n");
         $type = $this->unpackInt8($data, 0);
         $id = $this->unpackInt8($data, 1);
         $len = $this->unpackInt16($data, 2);

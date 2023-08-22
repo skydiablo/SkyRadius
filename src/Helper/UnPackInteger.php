@@ -3,6 +3,7 @@
 
 namespace SkyDiablo\SkyRadius\Helper;
 
+use InvalidArgumentException;
 use SkyDiablo\SkyRadius\Attribute\IntegerAttribute;
 
 trait UnPackInteger
@@ -12,49 +13,53 @@ trait UnPackInteger
      * @param string $data
      * @param int $startPos
      * @return int
+     * @throws InvalidArgumentException
      */
-    private function unpackInt(int $bit, string $data, $startPos = 0): int
+    private function unpackInt(int $bit, string $data, int $startPos = 0): int
     {
+        if (!$data) {
+            throw new InvalidArgumentException("Empty input data");
+        }
         $format = IntegerAttribute::FORMATTER[$bit];
         return unpack($format, substr($data, $startPos, $bit / 8))[1];
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt8($data, $startPos = 0): int
+    protected function unpackInt8(string $data, int $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_8, $data, $startPos);
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt16($data, $startPos = 0): int
+    protected function unpackInt16(string $data, int $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_16, $data, $startPos);
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt32($data, $startPos = 0): int
+    protected function unpackInt32(string $data, int $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_32, $data, $startPos);
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param int $startPos
      * @return int
      */
-    protected function unpackInt64($data, $startPos = 0): int
+    protected function unpackInt64(string $data, int $startPos = 0): int
     {
         return $this->unpackInt(IntegerAttribute::BIT_64, $data, $startPos);
     }

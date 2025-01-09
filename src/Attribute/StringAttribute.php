@@ -13,6 +13,7 @@ use SkyDiablo\SkyRadius\Exception\RangeException;
  */
 class StringAttribute extends AbstractAttribute
 {
+    private const MAX_LENGTH = 253;  // RADIUS attribute value max length
 
     /**
      * StringAttribute constructor.
@@ -32,9 +33,9 @@ class StringAttribute extends AbstractAttribute
      */
     private function validateLength(string $value): void
     {
-        if (strlen($value) > 253) {
+        if (strlen($value) > self::MAX_LENGTH) {
             throw new RangeException(
-                sprintf('Value length %d exceeds maximum allowed length of 253 bytes', strlen($value))
+                sprintf('Value length %d exceeds maximum allowed length of %d bytes', strlen($value), self::MAX_LENGTH)
             );
         }
     }

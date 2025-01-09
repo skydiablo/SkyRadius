@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius\Attribute;
 
+use SkyDiablo\SkyRadius\Exception\RangeException;
+
 /**
  * Class StringAttribute
  * @package SkyDiablo\SkyRadius\Attribute
@@ -19,9 +21,22 @@ class StringAttribute extends AbstractAttribute
      */
     public function __construct(int $type, string $value)
     {
-        // by RADIUS protocol design, the length is limited to 253 bytes
-        assert(strlen($value) <= 253);
+        $this->validateLength($value);
         parent::__construct($type, $value);
+    }
+
+    /**
+     * Validates the length of the string value according to RADIUS protocol
+     * @param string $value
+     * @throws RangeException
+     */
+    private function validateLength(string $value): void
+    {
+        if (strlen($value) > 253) {
+            throw new RangeException(
+                sprintf('Value length %d exceeds maximum allowed length of 253 bytes', strlen($value))
+            );
+        }
     }
 
 }

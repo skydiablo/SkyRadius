@@ -15,6 +15,7 @@ use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\StringAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\VendorSpecificAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeManager;
+use SkyDiablo\SkyRadius\Exception\InvalidArgumentException;
 use SkyDiablo\SkyRadius\Exception\RangeException;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
@@ -124,21 +125,21 @@ class RadiusProtocolExtendedTest extends TestCase
     public function testErrorHandling(): void
     {
         // Test invalid attribute length
-        $this->expectException(\AssertionError::class);
+        $this->expectException(RangeException::class);
         new StringAttribute(
             AttributeInterface::ATTR_USER_NAME,
             str_repeat('a', 254) // Too long (max 253 bytes)
         );
 
         // Test invalid IP format
-        $this->expectException(\AssertionError::class);
+        $this->expectException(InvalidArgumentException::class);
         new IPv4Attribute(
             AttributeInterface::ATTR_NAS_IP_ADDRESS,
             'invalid.ip.address'
         );
 
-        // Test invalid integer bit size
-        $this->expectException(\InvalidArgumentException::class);
+        // unsupported bit size
+        $this->expectException(InvalidArgumentException::class);
         new IntegerAttribute(
             AttributeInterface::ATTR_NAS_PORT,
             1812,

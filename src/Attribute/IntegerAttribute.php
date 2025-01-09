@@ -28,6 +28,30 @@ class IntegerAttribute extends AbstractAttribute
 
     private $bit;
 
+    
+
+    /**
+     * StringAttribute constructor.
+     * @param int $type
+     * @param int $value
+     * @param int $bit
+     */
+    public function __construct(int $type, int $value, int $bit = self::BIT_32)
+    {
+        $this->validateBitSize($bit);
+        $this->validateValueForBitSize($value, $bit);
+        parent::__construct($type, $value);
+        $this->bit = $bit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBit(): int
+    {
+        return $this->bit;
+    }
+
     /**
      * @param int $value
      * @param int $bit
@@ -44,26 +68,13 @@ class IntegerAttribute extends AbstractAttribute
         }
     }
 
-    /**
-     * StringAttribute constructor.
-     * @param int $type
-     * @param int $value
-     * @param int $bit
-     */
-    public function __construct(int $type, int $value, int $bit = self::BIT_32)
-    {
-        assert(in_array($bit, self::FORMATTER));
-        $this->validateValueForBitSize($value, $bit);
-        parent::__construct($type, $value);
-        $this->bit = $bit;      
-    }
-
-    /**
-     * @return int
-     */
-    public function getBit(): int
-    {
-        return $this->bit;
+    private function validateBitSize(int $bit): void {
+        if (!in_array($bit, array_keys(self::FORMATTER))) {
+            throw new \InvalidArgumentException(
+                sprintf('Invalid bit size %d. Allowed values are: %s', 
+                    $bit, implode(', ', array_keys(self::FORMATTER)))
+            );
+        }
     }
 
 }

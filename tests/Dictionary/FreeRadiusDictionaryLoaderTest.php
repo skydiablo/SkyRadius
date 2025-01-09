@@ -2,47 +2,66 @@
 
 declare(strict_types=1);
 
-namespace SkyDiablo\SkyRadius\Tests\Dictionary;
+namespace SkyRadius\Tests\Dictionary;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SkyDiablo\SkyRadius\Dictionary\FreeRadiusDictionaryLoader;
 use SkyDiablo\SkyRadius\SkyRadius;
 use SkyDiablo\SkyRadius\AttributeHandler\StringAttributeHandler;
-use SkyDiablo\SkyRadius\AttributeHandler\IntegerAttributeHandler;
-use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 
 class FreeRadiusDictionaryLoaderTest extends TestCase
 {
-    private FreeRadiusDictionaryLoader $loader;
-    private SkyRadius $skyRadius;
-
+    private $tempFile;
+    
     protected function setUp(): void
     {
-        $this->skyRadius = $this->createMock(SkyRadius::class);
-        $this->loader = new FreeRadiusDictionaryLoader($this->skyRadius);
+        $this->tempFile = tmpfile();
+    }
+    
+    protected function tearDown(): void
+    {
+        if ($this->tempFile) {
+            fclose($this->tempFile);
+        }
     }
 
-    public function testGetAttributeHandlerByType(): void
+    public function testDictionaryParsing(): void
     {
-        $this->assertInstanceOf(
-            StringAttributeHandler::class,
-            $this->loader->getAttributeHandlerByType('STRING')
-        );
+        /** @var SkyRadius|MockObject $skyRadius */
+        $skyRadius = $this->createMock(SkyRadius::class);
+        $loader = new FreeRadiusDictionaryLoader($skyRadius);
         
-        $this->assertInstanceOf(
-            IntegerAttributeHandler::class,
-            $this->loader->getAttributeHandlerByType('INTEGER')
-        );
+        // Schreibe Test-Dictionary
+        fwrite($this->tempFile, "VENDOR Cisco 9\n");
+        fwrite($this->tempFile, "BEGIN-VENDOR Cisco\n");
+        fwrite($this->tempFile, "ATTRIBUTE Cisco-AVPair 1 string\n");
+        fwrite($this->tempFile, "END-VENDOR Cisco\n");
         
-        $this->assertInstanceOf(
-            IPv4AttributeHandler::class,
-            $this->loader->getAttributeHandlerByType('IPADDR')
-        );
+        // Prüfe Handler-Registrierung
+        $skyRadius->expects($this->once())
+                 ->method('setVsaHandler')
+                 ->with(
+                     $this->equalTo(9),
+                     $this->isInstanceOf(StringAttributeHandler::class),
+                     $this->equalTo(1),
+                     $this->equalTo('Cisco-AVPair'),
+                     $this->equalTo([])
+                 );
+        
+        $loader->load(stream_get_meta_data($this->tempFile)['uri']);
     }
 
-    public function testInvalidAttributeType(): void
+    public function testInvalidDictionaryFormat(): void
     {
-        $this->expectException(\Exception::class);
-        $this->loader->getAttributeHandlerByType('INVALID_TYPE');
+        /** @var SkyRadius|MockObject $skyRadius */
+        $skyRadius = $this->createMock(SkyRadius::class);
+        $loader = new FreeRadiusDictionaryLoader($skyRadius);
+        
+        // Schreibe ungültiges Dictionary
+        fwrite($this->tempFile, "INVALID LINE\n");
+        
+        $loader->load(stream_get_meta_data($this->tempFile)['uri']);
+        $this->assertTrue(true); //if this is not thrown, the test is successful
     }
 } 

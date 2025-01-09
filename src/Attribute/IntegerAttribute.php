@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius\Attribute;
 
+use SkyDiablo\SkyRadius\Exception\RangeException;
+
 /**
  * Class StringAttribute
  * @package SkyDiablo\SkyRadius\Attribute
@@ -27,6 +29,22 @@ class IntegerAttribute extends AbstractAttribute
     private $bit;
 
     /**
+     * @param int $value
+     * @param int $bit
+     * @throws \InvalidArgumentException
+     */
+    private function validateValueForBitSize(int $value, int $bit): void
+    {
+        $maxValue = (2 ** $bit) - 1;
+        if ($value < 0 || $value > $maxValue) {
+            throw new RangeException(
+                sprintf('Value %d is outside valid range for %d-bit (0 to %d)',
+                    $value, $bit, $maxValue)
+            );
+        }
+    }
+
+    /**
      * StringAttribute constructor.
      * @param int $type
      * @param int $value
@@ -34,8 +52,10 @@ class IntegerAttribute extends AbstractAttribute
      */
     public function __construct(int $type, int $value, int $bit = self::BIT_32)
     {
+        assert(in_array($bit, self::FORMATTER));
+        $this->validateValueForBitSize($value, $bit);
         parent::__construct($type, $value);
-        $this->bit = $bit;
+        $this->bit = $bit;      
     }
 
     /**

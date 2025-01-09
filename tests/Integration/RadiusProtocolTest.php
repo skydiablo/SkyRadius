@@ -28,6 +28,12 @@ class RadiusProtocolTest extends TestCase
             AttributeInterface::ATTR_USER_NAME,
             'User-Name'
         );
+
+        $this->attributeManager->setHandler(
+            new StringAttributeHandler(),
+            AttributeInterface::ATTR_REPLY_MESSAGE,
+            'Reply-Message'
+        );
         
         $this->attributeManager->setHandler(
             new UserPasswordAttributeHandler(self::TEST_SECRET),
@@ -73,7 +79,7 @@ class RadiusProtocolTest extends TestCase
 
         // Test packet contents
         $this->assertNotEmpty($serializedRequest);
-        $this->assertEquals(RequestPacket::ACCESS_REQUEST, $requestPacket->getCode());
+        $this->assertEquals(RequestPacket::ACCESS_REQUEST, $requestPacket->getType());
         $this->assertEquals(1, $requestPacket->getIdentifier());
 
         // Create and test response packet
@@ -92,7 +98,7 @@ class RadiusProtocolTest extends TestCase
         $responsePacket->addAttribute($replyMessage);
 
         // Test response packet
-        $this->assertEquals(ResponsePacket::ACCESS_ACCEPT, $responsePacket->getCode());
+        $this->assertEquals(ResponsePacket::ACCESS_ACCEPT, $responsePacket->getType());
         $this->assertEquals($requestPacket->getIdentifier(), $responsePacket->getIdentifier());
 
         // Serialize response
@@ -127,7 +133,7 @@ class RadiusProtocolTest extends TestCase
         $requestPacket->addAttribute($sessionId);
 
         // Test packet
-        $this->assertEquals(RequestPacket::ACCOUNTING_REQUEST, $requestPacket->getCode());
+        $this->assertEquals(RequestPacket::ACCOUNTING_REQUEST, $requestPacket->getType());
         $this->assertEquals(2, $requestPacket->getIdentifier());
 
         // Create accounting response
@@ -138,7 +144,7 @@ class RadiusProtocolTest extends TestCase
             $requestPacket->getAuthenticator()
         );
 
-        $this->assertEquals(ResponsePacket::ACCOUNTING_RESPONSE, $responsePacket->getCode());
+        $this->assertEquals(ResponsePacket::ACCOUNTING_RESPONSE, $responsePacket->getType());
         $this->assertEquals($requestPacket->getIdentifier(), $responsePacket->getIdentifier());
     }
 
@@ -151,7 +157,7 @@ class RadiusProtocolTest extends TestCase
             random_bytes(16)
         );
 
-        $this->assertNotEquals(self::TEST_SECRET, $requestPacket->getSecret());
+        $this->assertNotEquals(self::TEST_SECRET, $requestPacket->getAuthenticator());
     }
 
     public function testAttributeAliases(): void

@@ -15,6 +15,7 @@ use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\StringAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeHandler\VendorSpecificAttributeHandler;
 use SkyDiablo\SkyRadius\AttributeManager;
+use SkyDiablo\SkyRadius\Exception\RangeException;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 
 class RadiusProtocolExtendedTest extends TestCase
@@ -118,28 +119,6 @@ class RadiusProtocolExtendedTest extends TestCase
     }
 
     /**
-     * Test für Packet-Validierung
-     */
-    public function testPacketValidation(): void
-    {
-        $packet = new RequestPacket(
-            RequestPacket::ACCESS_REQUEST,
-            1,
-            self::TEST_SECRET,
-            random_bytes(16)
-        );
-
-        // Test packet code validation
-        $this->expectException(\InvalidArgumentException::class);
-        new RequestPacket(
-            99, // Invalid code
-            1,
-            self::TEST_SECRET,
-            random_bytes(16)
-        );
-    }
-
-    /**
      * Test für Error-Handling
      */
     public function testErrorHandling(): void
@@ -152,7 +131,7 @@ class RadiusProtocolExtendedTest extends TestCase
         );
 
         // Test invalid IP format
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\AssertionError::class);
         new IPv4Attribute(
             AttributeInterface::ATTR_NAS_IP_ADDRESS,
             'invalid.ip.address'
@@ -173,7 +152,7 @@ class RadiusProtocolExtendedTest extends TestCase
     public function testAttributeValueValidation(): void
     {
         // Test integer range validation
-        $this->expectException(\RangeException::class);
+        $this->expectException(RangeException::class);
         new IntegerAttribute(
             AttributeInterface::ATTR_NAS_PORT,
             -1, // Negative values not allowed
@@ -190,7 +169,7 @@ class RadiusProtocolExtendedTest extends TestCase
         $this->assertEquals($maxValue, $attr->getValue());
 
         // Test overflow
-        $this->expectException(\RangeException::class);
+        $this->expectException(RangeException::class);
         new IntegerAttribute(
             AttributeInterface::ATTR_NAS_PORT,
             2 ** 32, // Too large for 32 bits

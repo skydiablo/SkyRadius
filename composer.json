@@ -16,7 +16,8 @@
   "require": {
     "skydiablo/sky-ttl-list": "@dev",
     "react/datagram": "^1.9",
-    "react/cache": "^1.2"
+    "react/cache": "^1.2",
+    "react/async": "^4.3"
   },
   "autoload": {
     "psr-4": {

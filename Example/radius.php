@@ -63,6 +63,5 @@ Loop::get()->addPeriodicTimer(1, function () use (&$lastCount, &$packetCounter) 
     $lastCount = $packetCounter;
     $message = sprintf("PacketCount: %d / IntervalCount: %d\n", $packetCounter, $intervalCount);
 
-    // @reactPHP community, please dont catch me, but a STDOUT stream handler seems not working in windows environments?
     echo $message;
 });

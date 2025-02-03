@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
@@ -7,21 +8,25 @@ use React\Datagram\Factory;
 use React\Datagram\Socket;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
+use React\Promise\PromiseInterface;
 use SkyDiablo\SkyRadius\Connection\Context;
 use SkyDiablo\SkyRadius\Exception\InvalidRequestException;
-use SkyDiablo\SkyRadius\Exception\InvalidResponseException;
+use SkyDiablo\SkyRadius\Exception\InvalidServerResponseException;
 use SkyDiablo\SkyRadius\Exception\SilentDiscardException;
 use SkyDiablo\SkyRadius\Exception\SkyRadiusException;
 use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
 use SkyDiablo\SkyRadius\Packet\ResponsePacket;
 
+use function React\Async\await;
+
 class SkyRadiusServer extends SkyRadius
 {
     public function __construct(string $uri, string $psk, AttributeManager $attributeManager = null, LoopInterface $loop = null)
     {
         parent::__construct($uri, $psk, $attributeManager, $loop);
-        (new Factory($loop))->createServer($uri)
+        (new Factory($loop))
+            ->createServer($uri)
             ->then(function (Socket $socket) {
                 $socket->on('message', function (string $raw, string $peer, Socket $server) {
                     try {
@@ -30,7 +35,7 @@ class SkyRadiusServer extends SkyRadius
                         $this->validateRequestPackage($requestPacket);
                         $context = new Context($requestPacket);
                         $this->emit(self::EVENT_PACKET, [$context]);
-                        $this->sendResponse($context, $peer, $server);
+                        await($this->sendResponse($context, $peer, $server));
                     } catch (SilentDiscardException $e) {
                         // silently ignored...
                         $this->emit(self::EVENT_PACKET_DISCARDED, [$e]);
@@ -38,39 +43,51 @@ class SkyRadiusServer extends SkyRadius
                         $this->emit(self::EVENT_ERROR, [$e]);
                     }
                 });
+
                 return $socket;
             })
-            ->otherwise(function (\Throwable $e) {
+            ->catch(function (\Throwable $e) {
                 $this->emit(self::EVENT_ERROR, [new SkyRadiusException($e->getMessage(), $e->getCode(), $e)]);
             });
     }
 
     /**
      * @param Context $context
-     * @param string $peer
-     * @param Socket $socket
-     * @throws InvalidResponseException
+     * @param string  $peer
+     * @param Socket  $socket
+     *
+     * @return PromiseInterface
+     * @throws InvalidServerResponseException
      */
-    protected function sendResponse(Context $context, string $peer, Socket $socket)
+    protected function sendResponse(Context $context, string $peer, Socket $socket): PromiseInterface
     {
         $def = new Deferred();
-        $def->promise()->then(function (ResponsePacket $responsePacket) use ($context, $peer, $socket) {
+        $def->promise()->then(function (ResponsePacket $responsePacket) use ($context, $peer, $socket, $def) {
             if (!$this->validateResponse($context)) {
-                throw InvalidResponseException::create();
+                $def->reject(InvalidServerResponseException::create(context: $context));
             }
-            $socket->send(
-                $this->serializeResponse(
-                    $context->getResponse(),
-                    $context->getRequest()
-                ),
-                $peer
-            );
+            try {
+                $socket->send(
+                    $this->serializeResponse(
+                        $context->getResponse(),
+                        $context->getRequest(),
+                    ),
+                    $peer,
+                );
+            } catch (\Throwable $e) {
+                $def->reject($e);
+            }
+
+            return true;
         });
         $def->resolve($context->getResponse());
+
+        return $def->promise();
     }
 
     /**
      * @param Context $context
+     *
      * @return bool
      */
     protected function validateResponse(Context $context): bool
@@ -79,7 +96,8 @@ class SkyRadiusServer extends SkyRadius
             case PacketInterface::ACCESS_REQUEST:
                 return in_array($context->getResponse()->getType(), [
                     //an ACCESS-REQUEST must have an ACCESS-RESPONSE
-                    PacketInterface::ACCESS_ACCEPT, PacketInterface::ACCESS_REJECT
+                    PacketInterface::ACCESS_ACCEPT,
+                    PacketInterface::ACCESS_REJECT,
                 ], true);
             case PacketInterface::ACCOUNTING_REQUEST;
                 //an ACCOUNTING-REQUEST must have an ACCOUNTING-RESPONSE
@@ -91,6 +109,7 @@ class SkyRadiusServer extends SkyRadius
 
     /**
      * @param string $data
+     *
      * @return RequestPacket
      * @throws SilentDiscardException
      * @throws InvalidRequestException
@@ -102,6 +121,7 @@ class SkyRadiusServer extends SkyRadius
 
     /**
      * @param RequestPacket $requestPacket
+     *
      * @return bool
      * @throws InvalidRequestException
      */
@@ -116,7 +136,7 @@ class SkyRadiusServer extends SkyRadius
                 (where + indicates concatenation).
                 */
                 $haystack = substr_replace($requestPacket->getRaw(), str_repeat(chr(0x00), 16), 4, 16);
-                $md5 = md5($haystack . $this->psk, true);
+                $md5 = md5($haystack.$this->psk, true);
                 if (!($md5 === $requestPacket->getAuthenticator())) {
                     throw new InvalidRequestException(sprintf('Authenticator mismatch! Request: %s, Calculated: %s', bin2hex($requestPacket->getAuthenticator()), bin2hex($md5)), PacketInterface::ACCOUNTING_REQUEST);
                 }
@@ -127,7 +147,8 @@ class SkyRadiusServer extends SkyRadius
 
     /**
      * @param ResponsePacket $responsePacket
-     * @param RequestPacket $requestPacket
+     * @param RequestPacket  $requestPacket
+     *
      * @return string
      * @see https://tools.ietf.org/html/rfc2865#section-3
      */
@@ -144,15 +165,15 @@ class SkyRadiusServer extends SkyRadius
         // +16 = response-auth    /
         // +2 = "length" itself  /
         $header .= $this->packInt16(strlen($attributesData) + 20);
-        $haystack =
-            $header . // type + id + length
-            $requestPacket->getAuthenticator() .
-            $attributesData .
+        $haystack
+            = $header. // type + id + length
+            $requestPacket->getAuthenticator().
+            $attributesData.
             $this->psk;
         $responseAuth = md5($haystack, true);
 
 
-        return $header . $responseAuth . $attributesData;
+        return $header.$responseAuth.$attributesData;
     }
 
 }

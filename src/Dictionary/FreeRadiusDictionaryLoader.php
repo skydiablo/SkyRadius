@@ -11,8 +11,9 @@ use SkyDiablo\SkyRadius\SkyRadius;
 
 /**
  * Class FreeRadiusDictionaryLoader
+ *
  * @package SkyDiablo\SkyRadius\src\Dictionary\freeRADIUS
- * @see https://freeradius.org/radiusd/man/dictionary.html
+ * @see     https://freeradius.org/radiusd/man/dictionary.html
  */
 class FreeRadiusDictionaryLoader
 {
@@ -25,10 +26,12 @@ class FreeRadiusDictionaryLoader
     const MATCH_VALUE = 'VALUE';
     const MATCH_VALUE_NAME = 'VALUE_NAME';
     const MATCH_VALUE_NUMBER = 'VALUE_NUMBER';
-    const REGEX_RAW_LINE = '!^(?P<' . self::MATCH_KEY . '>[\w\-]+)[ \t]+(?P<' . self::MATCH_NAME . '>[\w\-]+)([ \t]+(?P<' . self::MATCH_LOAD . '>.*))?$!m';
-    const REGEX_VENDOR = '!(?P<' . self::MATCH_NUMBER . '>\d+)!m'; //@todo: add format handling
-    const REGEX_ATTRIBUTE = '!(?P<' . self::MATCH_OID . '>\d+)[ \t]+(?P<' . self::MATCH_TYPE . '>(\w+))!m'; //@todo: add flags
-    const REGEX_VALUE = '!(?P<' . self::MATCH_VALUE_NAME . '>[\w\-]+)[ \t]+(?P<' . self::MATCH_VALUE_NUMBER . '>(\d+))!m';
+    const REGEX_RAW_LINE = '!^(?P<'.self::MATCH_KEY.'>[\w\-]+)[ \t]+(?P<'.self::MATCH_NAME.'>[\w\-]+)([ \t]+(?P<'.self::MATCH_LOAD.'>.*))?$!m';
+    const REGEX_VENDOR = '!(?P<'.self::MATCH_NUMBER.'>\d+)!m'; //@todo: add format handling
+    const REGEX_ATTRIBUTE = '!(?P<'.self::MATCH_OID.'>\d+)[ \t]+(?P<'.self::MATCH_TYPE.'>(\w+))!m'; //@todo: add flags
+    const REGEX_VALUE = '!(?P<'.self::MATCH_VALUE_NAME.'>[\w\-]+)[ \t]+(?P<'.self::MATCH_VALUE_NUMBER.'>(\d+))!m';
+
+    const UNKNOWN_VENDOR_ID = 0;
 
     /**
      * @var SkyRadius
@@ -39,6 +42,7 @@ class FreeRadiusDictionaryLoader
 
     /**
      * FreeRadiusDictionaryLoader constructor.
+     *
      * @param SkyRadius $skyRadius
      */
     public function __construct(SkyRadius $skyRadius)
@@ -48,6 +52,7 @@ class FreeRadiusDictionaryLoader
 
     /**
      * @param string $filenames
+     *
      * @throws \Exception
      */
     public function load(string ...$filenames)
@@ -59,12 +64,13 @@ class FreeRadiusDictionaryLoader
 
     /**
      * @param \SplFileObject $file
+     *
      * @throws \Exception
      */
     protected function loadFile(\SplFileObject $file)
     {
         $vendorIds = [];
-        $currentVendorId = null;
+        $currentVendorId = self::UNKNOWN_VENDOR_ID;
         $attributesByVendorId = [];
 
         while (!$file->eof()) {
@@ -78,18 +84,19 @@ class FreeRadiusDictionaryLoader
                         }
                         break;
                     case 'BEGIN-VENDOR': // BEGIN-VENDOR vendor-name
-                        if (!($currentVendorId = $vendorIds[$matches[self::MATCH_NAME]] ?? null)) {
+                        if (!($currentVendorId = $vendorIds[$matches[self::MATCH_NAME]] ?? self::UNKNOWN_VENDOR_ID)) {
                             throw new \Exception(sprintf('Vendor "%s" not found, can not load freeRADIUS dictionary file: %s', $matches[self::MATCH_NAME], $file->getPathname()));
                         }
                         break;
                     case 'END_VENDOR':
-                        $currentVendorId = null;
+                        $currentVendorId = self::UNKNOWN_VENDOR_ID;
                         break;
                     case 'ATTRIBUTE': // ATTRIBUTE name oid type [flags]
                         if (preg_match(self::REGEX_ATTRIBUTE, $matches[self::MATCH_LOAD], $subMatches)) {
-                                $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] = [];
+                            $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] ??
+                                $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] = [];
                             $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]] += [
-                                self::MATCH_OID => (int)$subMatches[self::MATCH_OID],
+                                self::MATCH_OID  => (int)$subMatches[self::MATCH_OID],
                                 self::MATCH_TYPE => $subMatches[self::MATCH_TYPE],
                             ];
                         }
@@ -98,7 +105,7 @@ class FreeRadiusDictionaryLoader
                         if (preg_match(self::REGEX_VALUE, $matches[self::MATCH_LOAD], $subMatches)) {
                                 $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] ?? $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] = [];
                             $attributesByVendorId[$currentVendorId][$matches[self::MATCH_NAME]][self::MATCH_VALUE] += [
-                                (int)$subMatches[self::MATCH_VALUE_NUMBER] => $subMatches[self::MATCH_VALUE_NAME]
+                                (int)$subMatches[self::MATCH_VALUE_NUMBER] => $subMatches[self::MATCH_VALUE_NAME],
                             ];
                         }
                         break;
@@ -107,7 +114,6 @@ class FreeRadiusDictionaryLoader
                         break;
                 }
             }
-
         }
 
         foreach ($vendorIds as $vendorName => $vendorId) {
@@ -117,27 +123,27 @@ class FreeRadiusDictionaryLoader
                     $this->getAttributeHandlerByType($attr[self::MATCH_TYPE]),
                     $attr[self::MATCH_OID],
                     $attrName,
-                    $attr[self::MATCH_VALUE] ?? []
+                    $attr[self::MATCH_VALUE] ?? [],
                 );
             }
         }
 
-        foreach ($attributesByVendorId[null] ?? [] as $attrName => $attr) {
+        foreach ($attributesByVendorId[self::UNKNOWN_VENDOR_ID] ?? [] as $attrName => $attr) {
             $this->skyRadius->setHandler(
                 $this->getAttributeHandlerByType($attr[self::MATCH_TYPE]),
                 $attr[self::MATCH_OID],
                 $attrName,
-                $attr[self::MATCH_VALUE] ?? []
+                $attr[self::MATCH_VALUE] ?? [],
             );
         }
-
     }
 
     /**
      * @param string $type
+     *
      * @return mixed|IntegerAttributeHandler|IPv4AttributeHandler|StringAttributeHandler
      * @throws \Exception
-     * @see https://www.rfc-editor.org/rfc/rfc8044.html
+     * @see  https://www.rfc-editor.org/rfc/rfc8044.html
      * @todo incomplete type handling, checkout linked RFC
      */
     public function getAttributeHandlerByType(string $type)

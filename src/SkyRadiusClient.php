@@ -38,7 +38,7 @@ class SkyRadiusClient extends SkyRadius
      * @param AttributeManager|null $attributeManager
      * @param LoopInterface|null $loop
      */
-    public function __construct(string $uri, string $psk, float $responseTimeout = 10.0, AttributeManager $attributeManager = null, LoopInterface $loop = null)
+    public function __construct(string $uri, string $psk, float $responseTimeout = 10.0, ?AttributeManager $attributeManager = null, ?LoopInterface $loop = null)
     {
         parent::__construct($uri, $psk, $attributeManager, $loop);
         $this->requestStack = new SkyTtlList($loop, $responseTimeout);

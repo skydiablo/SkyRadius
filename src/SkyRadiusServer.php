@@ -22,7 +22,7 @@ use function React\Async\await;
 
 class SkyRadiusServer extends SkyRadius
 {
-    public function __construct(string $uri, string $psk, AttributeManager $attributeManager = null, LoopInterface $loop = null)
+    public function __construct(string $uri, string $psk, ?AttributeManager $attributeManager = null, ?LoopInterface $loop = null)
     {
         parent::__construct($uri, $psk, $attributeManager, $loop);
         (new Factory($loop))
@@ -99,7 +99,7 @@ class SkyRadiusServer extends SkyRadius
                     PacketInterface::ACCESS_ACCEPT,
                     PacketInterface::ACCESS_REJECT,
                 ], true);
-            case PacketInterface::ACCOUNTING_REQUEST;
+            case PacketInterface::ACCOUNTING_REQUEST:
                 //an ACCOUNTING-REQUEST must have an ACCOUNTING-RESPONSE
                 return $context->getResponse()->getType() === PacketInterface::ACCOUNTING_RESPONSE;
             default:

@@ -44,7 +44,7 @@ class VendorSpecificAttributeHandler extends AbstractAttributeHandler
      * @param array $valueAlias
      * @return VendorSpecificAttributeHandler
      */
-    public function setHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $valueAlias = []): VendorSpecificAttributeHandler
+    public function setHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, ?string $alias = null, array $valueAlias = []): VendorSpecificAttributeHandler
     {
         $ah = $this->attributeManagerList[$vendorId] ?? $this->attributeManagerList[$vendorId] = new AttributeManager();
         $ah->setHandler($handler, $type, $alias, $valueAlias);

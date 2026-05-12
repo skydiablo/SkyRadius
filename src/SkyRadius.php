@@ -65,7 +65,7 @@ abstract class SkyRadius extends EventEmitter
      * @param AttributeManager|null $attributeManager
      * @param LoopInterface|null $loop
      */
-    public function __construct(string $uri, string $psk, AttributeManager $attributeManager = null, LoopInterface $loop = null)
+    public function __construct(string $uri, string $psk, ?AttributeManager $attributeManager = null, ?LoopInterface $loop = null)
     {
         $this->loop = $loop ?? Loop::get();
         $this->psk = $psk;
@@ -185,7 +185,7 @@ abstract class SkyRadius extends EventEmitter
      * @param array $values
      * @return $this
      */
-    public function setHandler(AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = [])
+    public function setHandler(AttributeHandlerInterface $handler, int $type, ?string $alias = null, array $values = [])
     {
         $this->attributeManager->setHandler($handler, $type, $alias, $values);
         return $this;
@@ -199,7 +199,7 @@ abstract class SkyRadius extends EventEmitter
      * @param array $values
      * @return $this
      */
-    public function setVsaHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = [])
+    public function setVsaHandler(int $vendorId, AttributeHandlerInterface $handler, int $type, ?string $alias = null, array $values = [])
     {
         /** @var VendorSpecificAttributeHandler $vsaHandler */
         $vsaHandler = $this->attributeManager->getHandler(AttributeInterface::ATTR_VENDOR_SPECIFIC);

@@ -34,7 +34,7 @@ class AttributeManager
      * @param array $values
      * @return AttributeManager
      */
-    public function setHandler(AttributeHandlerInterface $handler, int $type, string $alias = null, array $values = []): AttributeManager
+    public function setHandler(AttributeHandlerInterface $handler, int $type, ?string $alias = null, array $values = []): AttributeManager
     {
         //@todo: this is an "easy way" to store handler and other stuff, maybe we should use an ValueObject?!
         $this->handler[$type] = [

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SkyRadius\Tests\AttributeHandler;
+namespace SkyDiablo\SkyRadius\Tests\AttributeHandler;
 
 use PHPUnit\Framework\TestCase;
 use SkyDiablo\SkyRadius\AttributeHandler\IPv4AttributeHandler;
@@ -18,7 +18,7 @@ class AttributeHandlerTest extends TestCase
     {
         $handler = new IPv4AttributeHandler();
         /** @var PacketInterface $packet */
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         // Test gültige IP
         $attr = new IPv4Attribute(4, "192.168.1.1");
@@ -35,7 +35,7 @@ class AttributeHandlerTest extends TestCase
     {
         $handler = new IntegerAttributeHandler();
         /** @var PacketInterface $packet */
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         // 8-Bit Test
         $attr8bit = new IntegerAttribute(1, 255, IntegerAttribute::BIT_8);

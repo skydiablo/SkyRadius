@@ -14,22 +14,22 @@ abstract class AbstractAttribute implements AttributeInterface
     /**
      * @var int
      */
-    private $type;
+    private int $type;
 
     /**
      * @var mixed
      */
-    private $value;
+    private mixed $value;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $typeAlias;
+    private ?string $typeAlias = null;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private $valueAlias;
+    private ?string $valueAlias = null;
 
     /**
      * RadiusAttribute constructor.
@@ -53,13 +53,13 @@ abstract class AbstractAttribute implements AttributeInterface
     /**
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getTypeAlias(): ?string
     {
@@ -67,17 +67,18 @@ abstract class AbstractAttribute implements AttributeInterface
     }
 
     /**
-     * @param string $typeAlias
+     * @param ?string $alias
+     *
      * @return AbstractAttribute
      */
-    public function setTypeAlias(string $typeAlias): AbstractAttribute
+    public function setTypeAlias(?string $alias): AbstractAttribute
     {
-        $this->typeAlias = $typeAlias;
+        $this->typeAlias = $alias;
         return $this;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getValueAlias(): ?string
     {
@@ -85,12 +86,13 @@ abstract class AbstractAttribute implements AttributeInterface
     }
 
     /**
-     * @param string $valueAlias
+     * @param ?string $alias
+     *
      * @return AbstractAttribute
      */
-    public function setValueAlias(string $valueAlias): AbstractAttribute
+    public function setValueAlias(?string $alias): AbstractAttribute
     {
-        $this->valueAlias = $valueAlias;
+        $this->valueAlias = $alias;
         return $this;
     }
 

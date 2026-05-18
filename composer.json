@@ -32,5 +32,11 @@
     "psr-4": {
       "SkyDiablo\\SkyRadius\\Tests\\": "tests/"
     }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "scripts-descriptions": {
+    "test": "Run the PHPUnit test suite"
   }
 }

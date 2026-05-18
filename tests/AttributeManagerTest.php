@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace SkyRadius\Tests;
+namespace SkyDiablo\SkyRadius\Tests;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SkyDiablo\SkyRadius\AttributeManager;
 use SkyDiablo\SkyRadius\AttributeHandler\AttributeHandlerInterface;
@@ -16,11 +15,9 @@ class AttributeManagerTest extends TestCase
     public function testAttributeAliasing(): void
     {
         $manager = new AttributeManager();
-        $packet = $this->createMock(PacketInterface::class);
-        
-        // Mock Handler erstellen
-        /** @var AttributeHandlerInterface|MockObject $handler */
-        $handler = $this->createMock(AttributeHandlerInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
+
+        $handler = $this->createStub(AttributeHandlerInterface::class);
         $handler->method('serializeValue')
                 ->willReturn('Administrator');
         
@@ -43,7 +40,7 @@ class AttributeManagerTest extends TestCase
     {
         $manager = new AttributeManager();
         /** @var PacketInterface $packet */
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         $serialized = $manager->serializeAttribute(
             new StringAttribute(999, 'test'),
@@ -55,8 +52,7 @@ class AttributeManagerTest extends TestCase
     public function testAttributeTypeRegistration(): void
     {
         $manager = new AttributeManager();
-        /** @var AttributeHandlerInterface|MockObject $handler */
-        $handler = $this->createMock(AttributeHandlerInterface::class);
+        $handler = $this->createStub(AttributeHandlerInterface::class);
         
         $manager->setHandler($handler, 1, 'Test-Attribute');
         

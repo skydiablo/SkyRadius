@@ -230,28 +230,28 @@ interface AttributeInterface
     /**
      * @return mixed
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
-     * @param string $alias
+     * @param ?string $alias
      * @return AttributeInterface
      */
-    public function setTypeAlias(string $alias);
+    public function setTypeAlias(?string $alias): AttributeInterface;
 
     /**
-     * @param string $alias
+     * @param ?string $alias
      * @return AttributeInterface
      */
-    public function setValueAlias(string $alias);
+    public function setValueAlias(?string $alias): AttributeInterface;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getTypeAlias();
+    public function getTypeAlias(): ?string;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getValueAlias();
+    public function getValueAlias(): ?string;
 
 }

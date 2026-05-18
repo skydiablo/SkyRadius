@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SkyRadius\Tests\Dictionary;
+namespace SkyDiablo\SkyRadius\Tests\Dictionary;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -54,10 +54,9 @@ class FreeRadiusDictionaryLoaderTest extends TestCase
 
     public function testInvalidDictionaryFormat(): void
     {
-        /** @var SkyRadius|MockObject $skyRadius */
-        $skyRadius = $this->createMock(SkyRadius::class);
+        $skyRadius = $this->createStub(SkyRadius::class);
         $loader = new FreeRadiusDictionaryLoader($skyRadius);
-        
+
         // Schreibe ungültiges Dictionary
         fwrite($this->tempFile, "INVALID LINE\n");
         

@@ -19,7 +19,7 @@ class TunnelAttributeTest extends TestCase
         $secret = 'testing123';
         $handler = new TunnelPasswordAttributeHandler($secret);
         
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         $packet->method('getAuthenticator')
                ->willReturn(str_repeat('A', 16));
         
@@ -39,7 +39,7 @@ class TunnelAttributeTest extends TestCase
     public function testTunnelPasswordMinimumLength(): void
     {
         $handler = new TunnelPasswordAttributeHandler('secret');
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         $packet->method('getAuthenticator')
                ->willReturn(str_repeat('A', 16));
         
@@ -53,7 +53,7 @@ class TunnelAttributeTest extends TestCase
     public function testTunnelPrivateGroupIdSerialization(): void
     {
         $handler = new TunnelAttributeHandler();
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         $groupId = 'VLAN-100';
         $tag = 1;
@@ -74,7 +74,7 @@ class TunnelAttributeTest extends TestCase
     public function testTunnelPrivateGroupIdDeserialization(): void
     {
         $handler = new TunnelAttributeHandler();
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         $groupId = 'VLAN-100';
         $tag = 1;
@@ -99,7 +99,7 @@ class TunnelAttributeTest extends TestCase
     public function testTunnelPrivateGroupIdWithDifferentTags(): void
     {
         $handler = new TunnelAttributeHandler();
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         $groupId = 'VLAN-200';
         

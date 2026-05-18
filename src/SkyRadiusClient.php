@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace SkyDiablo\SkyRadius;
@@ -7,6 +8,7 @@ use React\Datagram\SocketInterface;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
+use React\Promise\PromiseInterface;
 use SkyDiablo\SkyRadius\Exception\InvalidResponseException;
 use SkyDiablo\SkyRadius\Packet\PacketInterface;
 use SkyDiablo\SkyRadius\Packet\RequestPacket;
@@ -32,11 +34,12 @@ class SkyRadiusClient extends SkyRadius
 
     /**
      * SkyRadiusClient constructor.
-     * @param string $uri
-     * @param string $psk
-     * @param float $responseTimeout
+     *
+     * @param string                $uri
+     * @param string                $psk
+     * @param float                 $responseTimeout
      * @param AttributeManager|null $attributeManager
-     * @param LoopInterface|null $loop
+     * @param LoopInterface|null    $loop
      */
     public function __construct(string $uri, string $psk, float $responseTimeout = 10.0, ?AttributeManager $attributeManager = null, ?LoopInterface $loop = null)
     {
@@ -57,9 +60,10 @@ class SkyRadiusClient extends SkyRadius
      * @param string $message
      * @param string $serverAddress
      * @param string $client
+     *
      * @throws Exception\SilentDiscardException
      */
-    protected function onMessage(string $message, string $serverAddress, \React\Datagram\Socket $client)
+    protected function onMessage(string $message, string $serverAddress, \React\Datagram\Socket $client): void
     {
         /** @var ResponsePacket $responsePacket */
         $responsePacket = $this->handleRawInput($message, self::RAW_INPUT_TYPE_RESPONSE);
@@ -83,14 +87,15 @@ class SkyRadiusClient extends SkyRadius
     }
 
     /**
-     * @param RequestPacket $requestPacket
+     * @param RequestPacket  $requestPacket
      * @param ResponsePacket $responsePacket
+     *
      * @throws InvalidResponseException
      */
     protected function validateResponsePackage(RequestPacket $requestPacket, ResponsePacket $responsePacket): void
     {
         $haystack = substr_replace($responsePacket->getRaw(), $requestPacket->getAuthenticator(), 4, SkyRadius::AUTHENTICATOR_LENGTH); //replace authenticator
-        $md5 = md5($haystack . $this->psk, true);
+        $md5 = md5($haystack.$this->psk, true);
         if (!($md5 === $responsePacket->getAuthenticator())) {
             throw new InvalidResponseException(sprintf('Authenticator mismatch! Response: %s, Calculated: %s', bin2hex($responsePacket->getAuthenticator()), bin2hex($md5)));
         }
@@ -98,20 +103,23 @@ class SkyRadiusClient extends SkyRadius
 
     /**
      * @param RequestPacket $requestPacket
+     *
      * @return string
      */
     protected function serializeRequestPacket(RequestPacket $requestPacket): string
     {
         $raw = $requestPacket->getRaw();
-        return $this->packInt8($requestPacket->getType()) .
-            $this->packInt8($requestPacket->getIdentifier()) .
-            $this->packInt16(strlen($raw) + 20) . // 20 = type (1) + identifier (1) + length (2) + authenticator (16)
-            $requestPacket->getAuthenticator() .
+
+        return $this->packInt8($requestPacket->getType()).
+            $this->packInt8($requestPacket->getIdentifier()).
+            $this->packInt16(strlen($raw) + 20). // 20 = type (1) + identifier (1) + length (2) + authenticator (16)
+            $requestPacket->getAuthenticator().
             $raw;
     }
 
     /**
      * @param int $type
+     *
      * @return RequestPacket
      * @throws \Exception
      */
@@ -124,16 +132,18 @@ class SkyRadiusClient extends SkyRadius
         (where + indicates concatenation).
         */
         $authenticator = $type === PacketInterface::ACCOUNTING_REQUEST ? str_repeat(chr(0x00), self::AUTHENTICATOR_LENGTH) : random_bytes(self::AUTHENTICATOR_LENGTH);
+
         return new RequestPacket($type, ++$this->identifier, $authenticator, '');
     }
 
     /**
      * @param array $attributes
-     * @param int $type e.g.: PacketInterface::ACCESS_REQUEST
+     * @param int   $type e.g.: PacketInterface::ACCESS_REQUEST
+     *
      * @return \React\Promise\Promise|\React\Promise\PromiseInterface
      * @throws \Exception
      */
-    public function send(array $attributes, int $type = PacketInterface::ACCESS_REQUEST)
+    public function send(array $attributes, int $type = PacketInterface::ACCESS_REQUEST): PromiseInterface
     {
         $def = new Deferred();
         $requestPacket = $this->createRequestPacket($type);

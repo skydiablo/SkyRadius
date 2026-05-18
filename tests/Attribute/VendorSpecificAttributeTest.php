@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SkyRadius\Tests\Attribute;
+namespace SkyDiablo\SkyRadius\Tests\Attribute;
 
 use PHPUnit\Framework\TestCase;
 use SkyDiablo\SkyRadius\Attribute\AttributeInterface;
@@ -37,7 +37,7 @@ class VendorSpecificAttributeTest extends TestCase
 
     public function testVendorAttributeHandling(): void
     {
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         $innerAttr = new StringAttribute(1, 'test-value');
         $vsa = new VendorSpecificAttribute(9, $innerAttr); // Cisco = 9
@@ -56,7 +56,7 @@ class VendorSpecificAttributeTest extends TestCase
 
     public function testMultipleVendorAttributes(): void
     {
-        $packet = $this->createMock(PacketInterface::class);
+        $packet = $this->createStub(PacketInterface::class);
         
         $innerAttr1 = new StringAttribute(1, 'value1');
         $innerAttr2 = new StringAttribute(1, 'value2'); // Beachte: gleicher Typ 1

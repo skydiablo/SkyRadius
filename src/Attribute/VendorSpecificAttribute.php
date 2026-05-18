@@ -11,16 +11,17 @@ class VendorSpecificAttribute implements AttributeInterface
     /**
      * @var int
      */
-    private $vendorId;
+    private int $vendorId;
 
     /**
      * @var AttributeInterface
      */
-    private $innerVSA;
+    private AttributeInterface $innerVSA;
 
     /**
      * VendorSpecificAttribute constructor.
-     * @param int $vendorId
+     *
+     * @param int                $vendorId
      * @param AttributeInterface $vsa
      */
     public function __construct(int $vendorId, AttributeInterface $vsa)
@@ -56,7 +57,7 @@ class VendorSpecificAttribute implements AttributeInterface
     /**
      * @inheritDoc
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->innerVSA->getValue();
     }
@@ -64,7 +65,7 @@ class VendorSpecificAttribute implements AttributeInterface
     /**
      * @inheritDoc
      */
-    public function setTypeAlias(string $alias)
+    public function setTypeAlias(?string $alias): AttributeInterface
     {
         return $this->innerVSA->setTypeAlias($alias);
     }
@@ -72,7 +73,7 @@ class VendorSpecificAttribute implements AttributeInterface
     /**
      * @inheritDoc
      */
-    public function setValueAlias(string $alias)
+    public function setValueAlias(?string $alias) : AttributeInterface
     {
         return $this->innerVSA->setValueAlias($alias);
     }
@@ -80,7 +81,7 @@ class VendorSpecificAttribute implements AttributeInterface
     /**
      * @inheritDoc
      */
-    public function getTypeAlias()
+    public function getTypeAlias(): ?string
     {
         return $this->innerVSA->getTypeAlias();
     }
@@ -88,7 +89,7 @@ class VendorSpecificAttribute implements AttributeInterface
     /**
      * @inheritDoc
      */
-    public function getValueAlias()
+    public function getValueAlias(): ?string
     {
         return $this->innerVSA->getValueAlias();
     }

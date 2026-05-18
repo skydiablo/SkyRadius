@@ -25,7 +25,7 @@ class StringAttributeHandlerTest extends TestCase
         $value = "test-value";
         $rawAttr = new RawAttribute($type, strlen($value), $value, strlen($value) + 2);
         
-        $packet = $this->createMock(RequestPacket::class);
+        $packet = $this->createStub(RequestPacket::class);
         
         $result = $this->handler->deserializeRawAttribute($rawAttr, $packet);
         
@@ -38,7 +38,7 @@ class StringAttributeHandlerTest extends TestCase
     {
         $value = "test-value";
         $attr = new StringAttribute(1, $value);
-        $packet = $this->createMock(RequestPacket::class);
+        $packet = $this->createStub(RequestPacket::class);
         
         $result = $this->handler->serializeValue($attr, $packet);
         
@@ -49,7 +49,7 @@ class StringAttributeHandlerTest extends TestCase
     {
         $hexValue = "0xFF00";
         $attr = new StringAttribute(1, $hexValue);
-        $packet = $this->createMock(RequestPacket::class);
+        $packet = $this->createStub(RequestPacket::class);
         
         $result = $this->handler->serializeValue($attr, $packet);
         

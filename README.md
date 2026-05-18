@@ -63,12 +63,40 @@ started the radclient 5 times with `-n 40000` on the same server and piped the o
 
 ![15k Benchmark Test](./Example/15k-test-result.png?raw=true "15k Benchmark Test")
 
+## Running tests
+
+Install development dependencies from the project root:
+
+```
+composer install
+```
+
+Run the full PHPUnit suite:
+
+```
+composer test
+```
+
+Alternatively, invoke PHPUnit directly:
+
+```
+./vendor/bin/phpunit
+```
+
+Run a single test class or method:
+
+```
+./vendor/bin/phpunit tests/AttributeTest.php
+./vendor/bin/phpunit --filter testMethodName
+```
+
+Configuration lives in `phpunit.xml` at the project root. Deprecations, warnings, and PHPUnit notices are printed in full after the test run (`displayDetailsOnAllIssues` is enabled). Tests require PHP 8.1 or newer (PHPUnit 12 is used as the test runner).
+
 ## TODOs
 
 - Attribute Dictionary Loader
   - YAML
   - JSON
-- UnitTest
 
 ## Thanks
 

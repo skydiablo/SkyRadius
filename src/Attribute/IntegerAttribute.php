@@ -26,7 +26,7 @@ class IntegerAttribute extends AbstractAttribute
         self::BIT_64 => 'J',
     ];
 
-    private $bit;
+    private int $bit;
 
     
 

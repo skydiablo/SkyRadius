@@ -171,7 +171,6 @@ class FreeRadiusDictionaryLoader
                 // tlv          Type - Length - Value(allows nested attributes)
                 // ipv4prefix   IPv4 Prefix as given in RFC 6572.
                 throw new \Exception(sprintf('Type "%s" not implemented, yet', $type));
-                break;
         }
     }
 

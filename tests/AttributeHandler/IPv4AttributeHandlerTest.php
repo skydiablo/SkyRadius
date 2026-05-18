@@ -26,7 +26,7 @@ class IPv4AttributeHandlerTest extends TestCase
         $rawValue = pack("N", $ipLong);
         
         $rawAttr = new RawAttribute($type, strlen($rawValue), $rawValue, strlen($rawValue) + 2);
-        $packet = $this->createMock(RequestPacket::class);
+        $packet = $this->createStub(RequestPacket::class);
         
         $result = $this->handler->deserializeRawAttribute($rawAttr, $packet);
         
@@ -39,7 +39,7 @@ class IPv4AttributeHandlerTest extends TestCase
     {
         $ip = "192.168.1.1";
         $attr = new IPv4Attribute(4, $ip);
-        $packet = $this->createMock(RequestPacket::class);
+        $packet = $this->createStub(RequestPacket::class);
         
         $result = $this->handler->serializeValue($attr, $packet);
         

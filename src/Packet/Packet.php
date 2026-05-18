@@ -114,7 +114,7 @@ class Packet implements PacketInterface
      */
     public function addAttribute(AttributeInterface $attribute): Packet
     {
-        $this->attributes->attach($attribute, $attribute->getType());
+        $this->attributes->offsetSet($attribute, $attribute->getType());
         return $this;
     }
 
@@ -124,7 +124,7 @@ class Packet implements PacketInterface
      */
     public function addUnknownRawAttribute(AttributeInterface $attribute): Packet
     {
-        $this->unknownRawAttributes->attach($attribute, $attribute->getType());
+        $this->unknownRawAttributes->offsetSet($attribute, $attribute->getType());
         return $this;
     }
 
@@ -145,7 +145,7 @@ class Packet implements PacketInterface
      */
     public function removeUnknownRawAttribute(AttributeInterface $attribute): Packet
     {
-        $this->unknownRawAttributes->detach($attribute);
+        $this->unknownRawAttributes->offsetUnset($attribute);
         return $this;
     }
 
@@ -174,7 +174,7 @@ class Packet implements PacketInterface
      */
     public function removeAttribute(AttributeInterface $attribute): Packet
     {
-        $this->attributes->detach($attribute);
+        $this->attributes->offsetUnset($attribute);
         return $this;
     }
 
